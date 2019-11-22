@@ -10,9 +10,9 @@
 - [esx_property](https://github.com/ESX-Org/esx_property) 
 
 ## Support
-	* [impulserp.com](http://www.impulserp.com/forumdisplay.php?fid=17)
-	* [gitHub]()
-	* [discord](https://discord.gg/NqDGf3R)
+- [ImpulseRP Forums](http://www.impulserp.com/forumdisplay.php?fid=17)
+- [gitHub](https://github.com/CALauer/esx_irpidentity)
+- [Discord](https://discord.gg/NqDGf3R)
 
 ## Installation
 	* Add esx_irpidentity into your [esx] folder
@@ -35,7 +35,8 @@
 	- /char			- displays your active character
 
 ## How it works
-	- The concept is very simple and similar to Kashacters approach, however rather than manipulating steam identifiers and concatenating 1500 things, it simply saves all your information on your active toon, and when you switch toons, or register
+	- The concept is very simple and similar to Kashacters approach, however rather than manipulating steam identifiers and concatenating 1500 things, 
+	it simply saves all your information on your active toon, and when you switch toons, or register
 	a new toon it updates your character at that point and time and then retrieve your character of choosing. 
 
 ## Known Issues as of 11/21/2019
@@ -49,7 +50,11 @@
 	- Reduce threads
 	- Clean up code
 
-###Kudos
+## Goals
+	- Create specific area for chracter swapping
+	- 
+
+### Kudos
 	I just want to thank the creaters of esx_identity and Kashacters. Both these resources have inspired me to release this. Alot of this code is their code just repurposed, moved, and fiddled with to make this functioning as I believe was
 	intended. You can check out their resources below. 
 	- [esx_identity](https://github.com/ESX-Org/esx_identity)
@@ -58,6 +63,7 @@
 ## Legal
 ### License
 
-This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.
-This program Is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.
+This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As published by the Free Software Foundation, 
+either version 3 Of the License, Or (at your option) any later version.This program Is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty Of MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.
 You should have received a copy Of the GNU General Public License along with this program. If Not, see http://www.gnu.org/licenses/.
