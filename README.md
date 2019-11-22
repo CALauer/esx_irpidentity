@@ -55,10 +55,11 @@
 	- 
 
 ### Kudos
-	I just want to thank the creaters of esx_identity and Kashacters. Both these resources have inspired me to release this. Alot of this code is their code just repurposed, moved, and fiddled with to make this functioning as I believe was
+	I just want to thank the creaters of esx_identity and Kashacters. Both these resources have inspired me to release this. 
+	Alot of this code is their code just repurposed, moved, and fiddled with to make this functioning as I believe was
 	intended. You can check out their resources below. 
-	- [esx_identity](https://github.com/ESX-Org/esx_identity)
-	- [kashacters](https://github.com/KASHZIN/kashacters)
+- [esx_identity](https://github.com/ESX-Org/esx_identity)
+- [kashacters](https://github.com/KASHZIN/kashacters)
 
 ## Legal
 ### License
