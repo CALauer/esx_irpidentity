@@ -26,7 +26,7 @@ users are emptied.
 	* Add start esx_irpidentity to your `server.cfg`
 
 ## Demo
-	- You can check this out on my test server 
+You can check this out on my test server 
 - [ImpulseRP](fivem://connect/185.249.196.165:32126)
 
 ## What does this resource offer?
