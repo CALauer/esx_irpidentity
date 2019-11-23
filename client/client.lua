@@ -59,6 +59,9 @@ Citizen.CreateThread(function()
 			DisableControlAction(0, 143, true) -- disable melee
 			DisableControlAction(0, 75,  true) -- disable exit vehicle
 			DisableControlAction(27, 75, true) -- disable exit vehicle
+			DisableControlAction(0, 245, true)
+			DisableControlAction(0, 309, true)
+			DisableControlAction(0, 246, true) -- disable y key
 		end
 	end
 end)
@@ -69,7 +72,6 @@ end)
 
 RegisterNetEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(source, skin)
-	local identifier = 
 	
 	Citizen.Wait(3000)
 	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
@@ -201,7 +203,7 @@ function verifyName(name)
 	
 	-- Don't allow special characters (doesn't always work)
 	local count = 0
-	for i in name:gmatch('[abcdefghijklmnopqrstuvwxyzåäöABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789 -]') do
+	for i in name:gmatch('[abcdefghijklmnopqrstuvwxyzï¿½ï¿½ï¿½ABCDEFGHIJKLMNOPQRSTUVWXYZï¿½ï¿½ï¿½0123456789 -]') do
 		count = count + 1
 	end
 	if count ~= nameLength then
