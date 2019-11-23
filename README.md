@@ -19,7 +19,7 @@
 	Make sure you have of those resources, this may/may not work with some of them. Most your issues will be  the database 
 	setup. Refer to the .sql document for how your tables need to be setup. I will have a better guide in the future perhaps. 
 	It may be a good idea to just backup your current users, and delete that table and install this one. Works best when the 
-	users are emptied.
+	users are emptied. Also make sure you have the latest updates from fiveM meaning version 16.8.6.
 
 	* Add esx_irpidentity into your [esx] folder
 	* Import the importMe.sql file into your database
@@ -65,13 +65,14 @@
 # Goals/Future Updates
 ## Piorities
 	- Add delete character feature
-	- Make items/property/vehicles bound to account
+	- Make items/property/vehicles bound to character not account
 
 ## Goals/Future Updates
 	- Create specific area for character swapping 
 	- Add delete chracter feature
 	- Speed up transitioning time
-	- Add more checks to registration
+	- Add more checks to registration 
+	- Code cleanup and 
 
 ## Other
 	- This code is a bit sloppy and this is my first big release. So please bear with me, I wanted to release this 
@@ -82,6 +83,7 @@
 	release this. Alot of this code is their code just repurposed, moved, and fiddled with to make this 
 	functioning as I believe was intended. You can check out their resources below. Also would like to thank 
 	Lance and SJR for assisting me with the multiplayer testing of this resource. 	
+
 ### Other
 	Feel free to customize this in anyway you like, expect updates and changes. I hope you enjoy this because it has
 	taken me forever to get this working. This is my first legit release so its probably not done in the best of manners. 
