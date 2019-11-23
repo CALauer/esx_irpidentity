@@ -48,7 +48,8 @@ users are emptied.
 	choosing. 
 
 ## Known Issues as of 11/21/2019
-	- All vehicles , itmes, and property are account bound. Meaning All your toons will share the same vehicles, items, and property
+	- All vehicles , itmes, and property are account bound. Meaning All your toons will share the same vehicles, items, 
+	  and property
 	- Loadouts may/maynot be working. Not 100% sure. Will be testing
 	- Can not delete users without accessing the database
 	- Sometimes you will get force respawn when loading
@@ -67,7 +68,7 @@ users are emptied.
 
 ## Other
 	- This code is a bit sloppy and this is my first big release. So please bear with me, I wanted to release this 
-	sooner than later that is why it is being released now. I appreciate all feedback, both good and bad. 
+	  sooner than later that is why it is being released now. I appreciate all feedback, both good and bad. 
 
 ### Kudos
 	I just want to thank the creaters of esx_identity and Kashacters. Both these resources have inspired me to
