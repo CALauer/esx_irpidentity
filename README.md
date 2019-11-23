@@ -26,9 +26,10 @@
 	* Add start esx_irpidentity to your `server.cfg`
 
 ## Demo
-	You can check this out on my test server 
-
-- [ImpulseRP](fivem://connect/185.249.196.165:32126)
+	- You can check this out on my test server 
+	- 185.249.196.165:32126
+	- Here is a short video as well
+- [Demo](https://www.youtube.com/watch?v=Z1N2Uw0TLe8)
 
 ## What does this resource offer?
 	- Allows servers to support up to three identities/account
