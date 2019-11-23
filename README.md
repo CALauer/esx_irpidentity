@@ -82,6 +82,10 @@
 	release this. Alot of this code is their code just repurposed, moved, and fiddled with to make this 
 	functioning as I believe was intended. You can check out their resources below. Also would like to thank 
 	Lance and SJR for assisting me with the multiplayer testing of this resource. 	
+### Other
+	Feel free to customize this in anyway you like, expect updates and changes. I hope you enjoy this because it has
+	taken me forever to get this working. This is my first legit release so its probably not done in the best of manners. 
+	Enjoy!
 
 - [esx_identity](https://github.com/ESX-Org/esx_identity)
 - [kashacters](https://github.com/KASHZIN/kashacters)
