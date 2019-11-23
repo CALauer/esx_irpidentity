@@ -25,6 +25,10 @@ users are emptied.
 	* Import the importMe.sql file into your database
 	* Add start esx_irpidentity to your `server.cfg`
 
+## Demo
+	- You can check this out on my test server 
+	- [ImpulseRP](fivem://connect/185.249.196.165:32126)
+
 ## What does this resource offer?
 	- Allows servers to support up to three identities/account
 	- Allows users to easily switch between toons
@@ -40,6 +44,7 @@ users are emptied.
 	- /register		- Opens the registration/characters selection screen
 	- /charlist		- displays a list of all your characters
 	- /char			- displays your active character
+	- /switch 		- switch toons/register
 
 ## How it works
 	The concept is very simple and similar to Kashacters approach, however rather than manipulating steam identifiers
