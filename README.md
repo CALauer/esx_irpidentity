@@ -27,7 +27,7 @@ users are emptied.
 
 ## Demo
 	- You can check this out on my test server 
-	- [ImpulseRP](fivem://connect/185.249.196.165:32126)
+- [ImpulseRP](fivem://connect/185.249.196.165:32126)
 
 ## What does this resource offer?
 	- Allows servers to support up to three identities/account
