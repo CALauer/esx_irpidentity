@@ -16,17 +16,18 @@
 - Be sure to report your bugs so I can fix them at the above mentioned. Thank you.
 
 ## Installation
-Make sure you have of those resources, this may/may not work with some of them. Most your issues will be  the database 
-setup. Refer to the .sql document for how your tables need to be setup. I will have a better guide in the future perhaps. 
-It may be a good idea to just backup your current users, and delete that table and install this one. Works best when the 
-users are emptied.
+	Make sure you have of those resources, this may/may not work with some of them. Most your issues will be  the database 
+	setup. Refer to the .sql document for how your tables need to be setup. I will have a better guide in the future perhaps. 
+	It may be a good idea to just backup your current users, and delete that table and install this one. Works best when the 
+	users are emptied.
 
 	* Add esx_irpidentity into your [esx] folder
 	* Import the importMe.sql file into your database
 	* Add start esx_irpidentity to your `server.cfg`
 
 ## Demo
-You can check this out on my test server 
+	You can check this out on my test server 
+
 - [ImpulseRP](fivem://connect/185.249.196.165:32126)
 
 ## What does this resource offer?
@@ -89,8 +90,8 @@ You can check this out on my test server
 ## Legal
 ### License
 
-This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As 
-published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.This program 
-Is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of 
-MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.You should have 
-received a copy Of the GNU General Public License along with this program. If Not, see http://www.gnu.org/licenses/.
+	This program Is free software: you can redistribute it And/Or modify it under the terms Of the GNU General Public License As 
+	published by the Free Software Foundation, either version 3 Of the License, Or (at your option) any later version.This program 
+	Is distributed In the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty Of 
+	MERCHANTABILITY Or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License For more details.You should have 
+	received a copy Of the GNU General Public License along with this program. If Not, see http://www.gnu.org/licenses/.
