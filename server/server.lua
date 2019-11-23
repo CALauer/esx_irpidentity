@@ -364,7 +364,7 @@ AddEventHandler('updateIdentity', function(identifier, data, callback)
 				end
 			end)
 		Citizen.Wait(1000)
-		TriggerClientEvent('updateIdentity', -1, skin, skin)
+		TriggerClientEvent('updateIdentity', -1, skin)
 		Citizen.Wait(100)
 		print()
 end)
@@ -686,25 +686,23 @@ end, {help = "Switch between character", params = {{name = "char", help = "the c
 -------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
+TriggerEvent('es:addCommand', 'register', function(source, args, user)
+	TriggerEvent('getCharacters', source, function(data)
+		if data.firstname3 ~= '' then
+			TriggerClientEvent('chat:addMessage', source, { args = { '^[ImpulseRP]', 'You can only have 3 registered characters. Use the ^3/chardel^0  command in order to delete existing characters.' } })
+		else
+			TriggerClientEvent('esx_irpidentity:showRegisterIdentity', source, {})
+		end
+	end)
+end)
 
 
 RegisterServerEvent('esx_irpidentity:getCharacterInformation')
 AddEventHandler('esx_irpidentity:getCharacterInformation', function()
-	TriggerEvent('es:addCommand', 'register', function(source, args, user)	
+	TriggerEvent('es:addCommand', 'switch', function(source, args, user)	
 		TriggerEvent('getCharacters', source, function(data)
-			local source = source
 			local xPlayer = ESX.GetPlayerFromId(source)
-
-			if xPlayer ~= nil then
+			if xPlayer ~= nil and source ~= nil then
 				local source		= source
 				local firstname1 	= data.firstname1
 				local lastname1 	= data.lastname1
@@ -723,55 +721,12 @@ AddEventHandler('esx_irpidentity:getCharacterInformation', function()
 				local bank3 		= data.bank3
 				TriggerClientEvent('esx_irpidentity:setCharacterInformation',  source, firstname1, lastname1, job1, money1, bank1,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)
 					TriggerEvent('saveIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)	--SAVES TO CHARACTERS BEFORE SWITCHING	
-					if data.firstname1 == '' then 
-						TriggerEvent('setIdentity', myIdentifiers.steamid, data, function(callback)
-						end)						
-						TriggerClientEvent('esx_irpidentity:showRegisterIdentity', source, {})
-					end
-					if data.firstname3 ~= '' then
-						TriggerClientEvent('chat:addMessage', source, { args = { '^[ImpulseRP]', 'You can only have 3 registered characters. Use the ^3/chardel^0  command in order to delete existing characters.' } })
-						else
-						TriggerClientEvent('esx_irpidentity:showRegisterIdentity', source, {})
-					end
+
 				end)
 			end
 		end)
 	end, {help = "Register a new character"})
 end)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 TriggerEvent('es:addGroupCommand', 'char', 'user', function(source, args, user)
 	getIdentity(source, function(data)
