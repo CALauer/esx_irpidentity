@@ -42,7 +42,7 @@ users are emptied.
 	- /char			- displays your active character
 
 ## How it works
-	- The concept is very simple and similar to Kashacters approach, however rather than manipulating steam identifiers
+	The concept is very simple and similar to Kashacters approach, however rather than manipulating steam identifiers
 	and concatenating 1500 things, it simply saves all your information on your active toon, and when you switch toons,
 	or register a new toon it updates your character at that point and time and then retrieve the character of your
 	choosing. 
@@ -63,6 +63,7 @@ users are emptied.
 	- Create specific area for character swapping 
 	- Add delete chracter feature
 	- Speed up transitioning time
+	- Add more checks to registration
 
 ## Other
 	- This code is a bit sloppy and this is my first big release. So please bear with me, I wanted to release this 
