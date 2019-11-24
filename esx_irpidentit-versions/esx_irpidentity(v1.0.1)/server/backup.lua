@@ -1,59 +1,14 @@
------------------------------------------------------------------------------              -----------------------------------------------------------------------------
----------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
------------------------------------------------------------------------------			   -----------------------------------------------------------------------------
----------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
------------------------------------------------------------------------------			   -----------------------------------------------------------------------------	
 ESX = nil
 
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-AddEventHandler('es:playerLoaded', function(source)
-	local myID = {
-		steamid = GetPlayerIdentifiers(source)[1],
-		playerid = source
-	}
-
-	TriggerClientEvent('esx_irpidentity:saveID', source, myID)
-	getIdentity(source, function(data)
-		if data.firstname == '' then
-			TriggerClientEvent('esx_irpidentity:identityCheck', source, false)
-			TriggerClientEvent('esx_irpidentity:showRegisterIdentity', source)
-		else
-			TriggerClientEvent('esx_irpidentity:identityCheck', source, true)
-		end
-	end)
-end)
-
-AddEventHandler('onResourceStart', function(resource)
-	if resource == GetCurrentResourceName() then
-		Citizen.Wait(5000)
-
-		-- Set all the client side variables for connected users one new time
-		local xPlayers, xPlayer = ESX.GetPlayers()
-		for i=1, #xPlayers, 1 do
-			xPlayer = ESX.GetPlayerFromId(xPlayers[i])
-
-			local myID = {
-				steamid  = xPlayer.identifier,
-				playerid = xPlayer.source
-			}
-
-			TriggerClientEvent('esx_irpidentity:saveID', xPlayer.source, myID)
-
-			getIdentity(xPlayer.source, function(data)
-				if data.firstname == '' then
-					TriggerClientEvent('esx_irpidentity:identityCheck', xPlayer.source, false)
-					TriggerClientEvent('esx_irpidentity:showRegisterIdentity', xPlayer.source)
-				else
-					TriggerClientEvent('esx_irpidentity:identityCheck', xPlayer.source, true)
-				end
-			end)
-		end
-	end
-end)
 
 function getIdentity(source, callback)
 	local identifier = GetPlayerIdentifiers(source)[1]
-
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                      ---------- FETCH CHARACTERS------------                        IMPULSERP                       --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                      ---------- FETCH CHARACTERS------------                        IMPULSERP                       --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
 	MySQL.Async.fetchAll('SELECT identifier, firstname, lastname, dateofbirth, sex, height, skin FROM `users` WHERE `identifier` = @identifier', {
 		['@identifier'] = identifier
 	}, function(result)
@@ -108,6 +63,7 @@ AddEventHandler("getCharacters", function(source, callback)
 		['@identifier'] = identifier
 	}, function(result)
 		if result[1] and result[2] and result[3] then
+
 			local data = {
 				firstname1				= result[1].firstname,
 				lastname1				= result[1].lastname,
@@ -301,20 +257,13 @@ AddEventHandler("getCharacters", function(source, callback)
 				is_dead3 				= '',
 				position3				= ''
 			}
+
 			callback(data)	
 		end
 	end)
 end)
-		
-		
 
------------------------------------------------------------------------------               -----------------------------------------------------------------------------
----------                        IMPULSERP                         ---------- DATABASE INFO ------------                         IMPULSERP                      --------- 
------------------------------------------------------------------------------			    -----------------------------------------------------------------------------
----------                        IMPULSERP                         ---------- DATABASE INFO ------------                         IMPULSERP                      --------- 
------------------------------------------------------------------------------			    -----------------------------------------------------------------------------
-RegisterServerEvent('setIdentity')
-AddEventHandler('setIdentity', function(identifier, data, callback)
+function setIdentity(identifier, data, callback)
 	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height)', {
 		['@identifier']		= identifier,
 		['@firstname']		= data.firstname,
@@ -327,6 +276,7 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 			callback(true)
 		end
 	end)
+
 	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height WHERE identifier = @identifier', {
 		['@identifier']		= identifier,
 		['@firstname']		= data.firstname,
@@ -335,10 +285,19 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 		['@sex']			= data.sex,
 		['@height']			= data.height
 	})
-end)
-
+end
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
 RegisterServerEvent('updateIdentity')
+
 AddEventHandler('updateIdentity', function(identifier, data, callback)
+	local source = source
+	local xPlayer = ESX.GetPlayerFromId(source)
+	
+
 		MySQL.Async.execute('UPDATE users SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier', {
 			['@identifier']					= identifier,
 			['@firstname']					= data.firstname,
@@ -357,13 +316,20 @@ AddEventHandler('updateIdentity', function(identifier, data, callback)
 		}, function(rowsChanged)
 			if callback then
 				callback(true)
-				end
-			end)
+			end
+			
+		end)
+
 		Citizen.Wait(1000)
-		TriggerClientEvent('updateIdentity', -1, skin)
+		TriggerClientEvent('updateIdentity', -1, skin, skin)
 		Citizen.Wait(100)
 		print()
-end)
+	end)
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
 
 AddEventHandler('saveIdentity', function (identifier, data, callback)
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
@@ -390,6 +356,7 @@ AddEventHandler('saveIdentity', function (identifier, data, callback)
 		end)
 		Citizen.Wait(2000)
 end)
+
 function deleteIdentity(identifier, data, callback)
 	MySQL.Async.execute('DELETE FROM `characters` WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
 		['@identifier']		= identifier,
@@ -405,75 +372,80 @@ function deleteIdentity(identifier, data, callback)
 		end)
 	end
 end)
-RegisterServerEvent('esx_irpidentity:getClientInfo')
-AddEventHandler('esx_irpidentity:getClientInfo', function(identifier)
-	local xPlayer = ESX.GetPlayerFromId(source)
-	local identifier = GetPlayerIdentifiers(source)[1]
-	local source = xPlayer.source	
-	TriggerEvent('getCharacters', source, function(data)
-		if xPlayer ~= nil then
-			local source		= source
-			local firstname1 	= data.firstname1
-			local lastname1 	= data.lastname1
-			local job1			= data.job1
-			local money1 		= data.money1
-			local bank1 		= data.bank1
-			local firstname2 	= data.firstname2
-			local lastname2 	= data.lastname2
-			local job2			= data.job2
-			local money2 		= data.money2
-			local bank2 		= data.bank2
-			local firstname3 	= data.firstname3
-			local lastname3 	= data.lastname3
-			local job3			= data.job3
-			local money3 		= data.money3
-			local bank3 		= data.bank3
-			TriggerClientEvent('esx_irpidentity:setCharacterInformation',  source, firstname1, lastname1, job1, money1, bank1,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)
-		end
-	end)
-end)
 
-RegisterServerEvent('setJob')
-AddEventHandler("setJob", function(setJob)
 
-		local xPlayer = ESX.GetPlayerFromId(source)
+
+
+--[[TriggerEvent('es:addCommand', 'testing2',  function(source)	
+		local source = source
+		local xPlayer = ESX.GetPlayerFromId(source)	
 		local identifier = GetPlayerIdentifiers(source)[1]	
 		MySQL.Async.fetchAll('SELECT * FROM `users` WHERE `identifier` = @identifier', {
 			['@identifier'] = identifier,
 		}, function(result)
 			if result[1].firstname ~= nil then
 				local data = {
-					identifier			= result[1].identifier,
-					job 				= result[1].job,
-					job_grade			= result[1].job_grade,
-					money				= result[1].money,
-					bank				= result[1].bank,	
+					identifier	= result[1].identifier,
+					job 		= result[1].job,
+					job_grade	 = result[1].job_grade,
 				}
-				local bank				= tonumber(result[1].bank)
-				local money				= tonumber(result[1].money)
-				local job				= result[1].job
-				local grade				= result[1].job_grade
+				local job1 = result[1].job
+				local grade1 = result[1].job_grade
 				if xPlayer then
-					if ESX.DoesJobExist(job, grade) then
-						xPlayer.setJob(job, grade)
+					if ESX.DoesJobExist(job1, grade1) then
+						xPlayer.setJob(job1,grade1)
 					else
 						TriggerClientEvent('chat:addMessage', source, { args = { '^1SYSTEM', 'That job does not exist.' } })
 					end
-					if xPlayer then 
-					xPlayer.setBankBalance(bank)
-					xPlayer.setMoney(money)
-					end
 				end
-				print(job)
-				print(grade)
-				print(money)
+				print(job1)
+				print(grade1)
 		end
 	end)
+end)]]-- 100% Working Configuration
+RegisterServerEvent("setJob")
+AddEventHandler("setJob", function(source, xPlayer, identifier)
+	local source = source
+	local xPlayer = ESX.GetPlayerFromId(source)	
+	local identifier = GetPlayerIdentifiers(source)[1]	
+	MySQL.Async.fetchAll('SELECT * FROM `users` WHERE `identifier` = @identifier', {
+		['@identifier'] = identifier,
+	}, function(result)
+		if result[1].firstname ~= nil then
+			local data = {
+				identifier	= result[1].identifier,
+				job 		= result[1].job,
+				job_grade	 = result[1].job_grade,
+			}
+			local job1 = result[1].job
+			local grade1 = result[1].job_grade
+			if xPlayer then
+				if ESX.DoesJobExist(job1, grade1) then
+					xPlayer.setJob(job1,grade1)
+				else
+					TriggerClientEvent('chat:addMessage', source, { args = { '^1SYSTEM', 'That job does not exist.' } })
+				end
+			end
+			print(job1)
+			print(grade1)
+	end
 end)
-																			------------------------SERVER EVENTS---------------------------
+end)
+
+	
+
+
+
+
+		
+-------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
 RegisterServerEvent('esx_irpidentity:setIdentity')
 AddEventHandler('esx_irpidentity:setIdentity', function(data, myIdentifiers)
-	TriggerEvent('setIdentity', myIdentifiers.steamid, data, function(callback)
+	setIdentity(myIdentifiers.steamid, data, function(callback)
 		if callback then
 			TriggerClientEvent('esx_irpidentity:identityCheck', myIdentifiers.playerid, true)
 		else
@@ -481,12 +453,73 @@ AddEventHandler('esx_irpidentity:setIdentity', function(data, myIdentifiers)
 		end
 	end)
 end)
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        COMPLETE                         ---------- DO NOT TOUCH------------                            COMPLETE                      --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                   IMPULSERP COMPLETE                    ---------- DO NOT TOUCH------------                        IMPULSERP COMPLETE                --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+AddEventHandler('es:playerLoaded', function(source)
+	local myID = {
+		steamid = GetPlayerIdentifiers(source)[1],
+		playerid = source
+	}
+
+	TriggerClientEvent('esx_irpidentity:saveID', source, myID)
+	getIdentity(source, function(data)
+		if data.firstname == '' then
+			TriggerClientEvent('esx_irpidentity:identityCheck', source, false)
+			TriggerClientEvent('esx_irpidentity:showRegisterIdentity', source)
+		else
+			TriggerClientEvent('esx_irpidentity:identityCheck', source, true)
+		end
+	end)
+end)
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        BUGGED                           ---------- DO NOT TOUCH  ------------                            BUGGED                      --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                   IMPULSERP COMPLETE                    ---------- DO NOT TOUCH------------                        IMPULSERP COMPLETE                --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+
+AddEventHandler('onResourceStart', function(resource)
+	if resource == GetCurrentResourceName() then
+		Citizen.Wait(3000)
+
+		-- Set all the client side variables for connected users one new time
+		local xPlayers, xPlayer = ESX.GetPlayers()
+		for i=1, #xPlayers, 1 do
+			xPlayer = ESX.GetPlayerFromId(xPlayers[i])
+
+			local myID = {
+				steamid  = xPlayer.identifier,
+				playerid = xPlayer.source
+			}
+
+			TriggerClientEvent('esx_irpidentity:saveID', xPlayer.source, myID)
+
+			getIdentity(xPlayer.source, function(data)
+				if data.firstname == '' then
+					TriggerClientEvent('esx_irpidentity:identityCheck', xPlayer.source, false)
+					TriggerClientEvent('esx_irpidentity:showRegisterIdentity', xPlayer.source)
+				else
+					TriggerClientEvent('esx_irpidentity:identityCheck', xPlayer.source, true)
+				end
+			end)
+		end
+	end
+end)
+
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
 RegisterServerEvent('esx_irpidentity:getCharacterInformation')
 AddEventHandler('esx_irpidentity:getCharacterInformation', function()
 TriggerEvent('es:addCommand', 'testing1', function(source, args, user)	
 	TriggerEvent('getCharacters', source, function(data)
 		local source = source
 		local xPlayer = ESX.GetPlayerFromId(source)
+
 		if xPlayer ~= nil then
 			local source		= source
 			local firstname1 	= data.firstname1
@@ -505,11 +538,148 @@ TriggerEvent('es:addCommand', 'testing1', function(source, args, user)
 			local money3 		= data.money3
 			local bank3 		= data.bank3
 
-			TriggerClientEvent('esx_irpidentity:setCharacterInformation',  source, firstname1, lastname1, job1, money1, bank1,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)		
-			end
-		end)
+		TriggerClientEvent('esx_irpidentity:setCharacterInformation', source, firstname1, lastname1, job1, money1, bank1,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)
+		end
+	end)
 	end)
 end)
+
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                         ---------- DO NOT TOUCH------------                            IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------	
+
+
+
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                          ---------    SWITCH   ----------                      IMPULSERP                            --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                          ---------    SWITCH   ----------                      IMPULSERP                            --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                      ---------- DELETE CHARACTERS------------                          IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                      ---------- DELETE CHARACTERS------------                          IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+--[[TriggerEvent('es:addGroupCommand', 'chardel', 'user', function(source, args, user)
+	local charNumber = tonumber(args[1])
+
+	if charNumber == nil or charNumber > 3 or charNumber < 1 then
+		TriggerClientEvent('chat:addMessage', source, { args = { '^[ImpulseRP]', 'That\'s an invalid character!' } })
+		return
+	end
+
+	TriggerEvent('getCharacters', source, function(data)	
+
+		if charNumber == 1 then
+
+			local data = {
+				identifier					= data.identifier,
+				firstname					= data.firstname1,
+				lastname					= data.lastname1,
+				dateofbirth					= data.dateofbirth1,
+				sex							= data.sex1,
+				height						= data.height1,
+				skin						= data.skin1,
+				money						= data.money1,
+				job							= data.job1,
+				job_grade					= data.job_grade1,
+				loadout						= data.loadout1,
+				bank						= data.bank1,
+				permission_level			= data.permission_level1,
+				is_dead						= data.is_dead1,
+				position					= data.position1
+			}
+
+			if data.firstname ~= '' then
+				deleteIdentity(GetPlayerIdentifiers(source)[1], data, function(callback)
+					if callback then
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You have deleted ^3' .. data.firstname .. ' ' .. data.lastname } })
+					else
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to delete the character, try again later or contact the server admin!' } })
+					end
+				end)
+			else
+				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 1!' } })
+			end
+
+		elseif charNumber == 2 then
+
+			local data = {
+				identifier					= data.identifier,
+				firstname					= data.firstname2,
+				lastname					= data.lastname2,
+				dateofbirth					= data.dateofbirth2,
+				sex							= data.sex2,
+				height						= data.height2,
+				skin						= data.skin2,
+				money						= data.money2,
+				job							= data.job2,
+				job_grade					= data.job_grade2,
+				loadout						= data.loadout2,
+				bank						= data.bank2,
+				permission_level			= data.permission_level2,
+				is_dead						= data.is_dead2,
+				position					= data.position2
+			}
+
+			if data.firstname ~= '' then
+				deleteIdentity(GetPlayerIdentifiers(source)[1], data, function(callback)
+					if callback then
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You have deleted ^3' .. data.firstname .. ' ' .. data.lastname } })
+					else
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to delete the character, try again later or contact the server admin!' } })
+					end
+				end)
+			else
+				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 2!' } })
+			end
+
+		elseif charNumber == 3 then
+
+			local data = {
+				identifier					= data.identifier,
+				firstname					= data.firstname3,
+				lastname					= data.lastname3,
+				dateofbirth					= data.dateofbirth3,
+				sex							= data.sex3,
+				height						= data.height3,
+				skin						= data.skin3,
+				money						= data.money3,
+				job							= data.job3,
+				job_grade					= data.job_grade3,
+				loadout						= data.loadout3,
+				bank						= data.bank3,
+				permission_level			= data.permission_level3,
+				is_dead						= data.is_dead3,
+				position					= data.position3
+			}
+
+			if data.firstname ~= '' then
+				deleteIdentity(GetPlayerIdentifiers(source)[1], data, function(callback)
+					if callback then
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You have deleted ^3' .. data.firstname .. ' ' .. data.lastname } })
+					else
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to delete the character, try again later or contact the server admin!' } })
+					end
+				end)
+			else
+				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 3!' } })
+			end
+		else
+			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to delete the character, try again!' } })
+		end
+	end)
+end, function(source, args, user)
+	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
+end, {help = "Delete a registered character", params = {{name = "char", help = "the character id, ranges from 1-3"}}}) ]]--
+
+-----------------------------------------------------------------------------              -----------------------------------------------------------------------------
+---------                        IMPULSERP                     ---------- GUI CHARACTER SELECT------------                        IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
+---------                        IMPULSERP                     ---------- GUI CHARACTER SELECT------------                        IMPULSERP                    --------- 
+-----------------------------------------------------------------------------			   -----------------------------------------------------------------------------
 
 RegisterServerEvent("esx_irpidentity:CharacterChosen")
 AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
@@ -518,7 +688,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 	local xPlayer = ESX.GetPlayerFromId(source)
 	print(charNumber)
 	TriggerEvent('getCharacters', source, function(data)	
-		if charNumber == 1 and xPlayer ~= nil then
+		if charNumber == 1 then
 			local data = {
 				identifier					= data.identifier,
 				firstname					= data.firstname1,
@@ -537,6 +707,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 				position					= data.position1
 
 			}
+
 			if data.firstname ~= '' then
 				TriggerEvent('saveIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
 					Citizen.Wait(2000)
@@ -585,7 +756,6 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 			else
 				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 2!' } })
 			end
-
 		elseif charNumber == 3 then
 
 			local data = {
@@ -605,6 +775,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 				is_dead						= data.is_dead3,
 				position					= data.position3
 			}
+
 			if data.firstname ~= '' then
 				TriggerEvent('saveIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
 					Citizen.Wait(2000)
@@ -620,49 +791,8 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 3!' } })
 			end
 		end
+
 	end)
 end, function(source, args, user)
 	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
 end, {help = "Switch between character", params = {{name = "char", help = "the character id, ranges from 1-3"}}})
---------------------------------------------------------------------------------------------Old Regster Command-----------------------------------------------------------------------------------------------
---[[TriggerEvent('es:addCommand', 'register', function(source, args, user)
-	TriggerEvent('getCharacters', source, function(data)
-		if data.firstname3 ~= '' then
-			TriggerClientEvent('chat:addMessage', source, { args = { '^[ImpulseRP]', 'You can only have 3 registered characters. Use the ^3/chardel^0  command in order to delete existing characters.' } })
-		else
-			TriggerClientEvent('esx_irpidentity:showRegisterIdentity', source, {})
-		end
-	end)
-end)]]-- UNCOMMENT OUT TO ENABLE ABILITY TO REGISTER ANYWHERE AS WELL AS CHARACTER SWAP
-
-TriggerEvent('es:addGroupCommand', 'char', 'user', function(source, args, user)
-	getIdentity(source, function(data)
-		if data.firstname == '' then
-			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You do not have an active character!' } })
-		else
-			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Active character: ^2' .. data.firstname .. ' ' .. data.lastname } })
-		end
-	end)
-end, function(source, args, user)
-	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
-end, {help = "List your current character"})
-
-TriggerEvent('es:addGroupCommand', 'charlist', 'user', function(source, args, user)
-	TriggerEvent('getCharacters', source, function(data)
-		if data.firstname1 ~= '' then
-			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 1:', data.firstname1 .. ' ' .. data.lastname1 } })
-			
-			if data.firstname2 ~= '' then
-				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 2:', data.firstname2 .. ' ' .. data.lastname2 } })
-				
-				if data.firstname3 ~= '' then
-					TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 3:', data.firstname3 .. ' ' .. data.lastname3 } })
-				end
-			end
-		else
-			TriggerClientEvent('chat:addMessage', source, { args = { '^[ImpulseRP]', 'You have no registered characters. yiu need to go to the medical center and register.' } })
-		end
-	end)
-end, function(source, args, user)
-	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
-end, {help = "List all your registered characters"})
