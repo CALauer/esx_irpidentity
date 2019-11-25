@@ -53,19 +53,7 @@
 	and concatenating 1500 things, it simply saves all your information on your active toon, and when you switch toons,
 	or register a new toon it updates your character at that point and time and then retrieve the character of your
 	choosing. 
-## Update 11/23/2029
-###	From Here on out updates detailed updates can be found on my forums.
-	- Added blip only feature. You now can only change characters at the medical center.
-		- You can uncomment the code to reenable if you like the /register command
-		- /switch has been completely removed. Can add back if anyone wants it
-		- Also included a folder of all release versions
-	- Decreased  transition times
-	- Cleaned code a bit
-	- Updated ReamMe.md
-### Coming up...
-	- Adding delete feature
-	- Items/vehicles/proprties bound to character not account.
-	- UI adhustments
+
 ## Known Issues as of 11/21/2019
 	- All vehicles , itmes, and property are account bound. Meaning All your toons will share the same vehicles, items, 
 	  and property

@@ -5,26 +5,23 @@ local hasIdentity = false
 local isDead = false
 
 ESX = nil
+
 Citizen.CreateThread(function()
 	while ESX == nil do
 		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 		Citizen.Wait(0)
 	end
 end)
-
 RegisterNetEvent('esx_irpidentity:identityCheck')
 AddEventHandler('esx_irpidentity:identityCheck', function(identityCheck)
 	hasIdentity = identityCheck
 end)
-
 AddEventHandler('esx:onPlayerDeath', function(data)
 	isDead = true
 end)
-
 AddEventHandler('playerSpawned', function(spawn)
 	isDead = false
 end)
-
 RegisterNUICallback('escape', function(data, cb)
 		EnableGui(false)
 end)
@@ -75,7 +72,8 @@ end)
 
 RegisterNetEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(source, skin)
-	Citizen.Wait(1000)
+	
+	Citizen.Wait(3000)
 	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
 		TriggerEvent('skinchanger:loadSkin', skin)
 		TriggerServerEvent('setJob', setJob)
@@ -138,13 +136,20 @@ RegisterNUICallback("CharacterChosen", function(data, cb)
     end
     cb("ok")
 end)
-
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
 RegisterNetEvent('esx_irpidentity:showRegisterIdentity')
 AddEventHandler('esx_irpidentity:showRegisterIdentity', function()
 	if not isDead then
 		EnableGui(true)
 	end
 end)
+
+
 
 RegisterNetEvent('esx_irpidentity:saveID')
 AddEventHandler('esx_irpidentity:saveID', function(data)
@@ -204,6 +209,13 @@ function verifyName(name)
 	if count ~= nameLength then
 		return 'Your player name contains special characters that are not allowed on this server.'
 	end
+	
+	-- Does the player carry a first and last name?
+	-- 
+	-- Example:
+	-- Allowed:     'Bob Joe'
+	-- Not allowed: 'Bob'
+	-- Not allowed: 'Bob joe'
 	local spacesInName    = 0
 	local spacesWithUpper = 0
 	for word in string.gmatch(name, '%S+') do
@@ -225,14 +237,15 @@ function verifyName(name)
 
 	return ''
 end
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+local holdingUp = false
 local store = ""
-local irpblip = nil
+local blipRobbery = nil
 ESX = nil
 
 local Keys = {
@@ -267,15 +280,59 @@ function drawTxt(x,y, width, height, scale, text, r,g,b,a, outline)
 	EndTextCommandDisplayText(x - width/2, y - height/2 + 0.005)
 end
 
-RegisterNetEvent('esx_irpidentity:setBlip')
-AddEventHandler('esx_irpidentity:setBlip', function(position)
-	irpblip = AddBlipForCoord(position.x, position.y, position.z)
+RegisterNetEvent('esx_holdup:currentlyRobbing')
+AddEventHandler('esx_holdup:currentlyRobbing', function(currentStore)
+	holdingUp, store = true, currentStore
+end)
 
-	SetBlipSprite(irpblip, 161)
-	SetBlipScale(irpblip, 2.0)
-	SetBlipColour(irpblip, 3)
+RegisterNetEvent('esx_holdup:killBlip')
+AddEventHandler('esx_holdup:killBlip', function()
+	RemoveBlip(blipRobbery)
+end)
 
-	PulseBlip(irpblip)
+RegisterNetEvent('esx_holdup:setBlip')
+AddEventHandler('esx_holdup:setBlip', function(position)
+	blipRobbery = AddBlipForCoord(position.x, position.y, position.z)
+
+	SetBlipSprite(blipRobbery, 161)
+	SetBlipScale(blipRobbery, 2.0)
+	SetBlipColour(blipRobbery, 3)
+
+	PulseBlip(blipRobbery)
+end)
+
+RegisterNetEvent('esx_holdup:tooFar')
+AddEventHandler('esx_holdup:tooFar', function()
+	holdingUp, store = false, ''
+	ESX.ShowNotification(_U('robbery_cancelled'))
+end)
+
+RegisterNetEvent('esx_holdup:robberyComplete')
+AddEventHandler('esx_holdup:robberyComplete', function(award)
+	holdingUp, store = false, ''
+	ESX.ShowNotification(_U('robbery_complete', award))
+end)
+
+RegisterNetEvent('esx_holdup:startTimer')
+AddEventHandler('esx_holdup:startTimer', function()
+	local timer = Stores[store].secondsRemaining
+
+	Citizen.CreateThread(function()
+		while timer > 0 and holdingUp do
+			Citizen.Wait(1000)
+
+			if timer > 0 then
+				timer = timer - 1
+			end
+		end
+	end)
+
+	Citizen.CreateThread(function()
+		while holdingUp do
+			Citizen.Wait(0)
+			drawTxt(0.66, 1.44, 1.0, 1.0, 0.4, _U('robbery_timer', timer), 255, 255, 255, 255)
+		end
+	end)
 end)
 
 Citizen.CreateThread(function()
@@ -286,7 +343,7 @@ Citizen.CreateThread(function()
 		SetBlipAsShortRange(blip, true)
 
 		BeginTextCommandSetBlipName("STRING")
-		AddTextComponentString(_U('medical_center'))
+		AddTextComponentString(_U('shop_robbery'))
 		EndTextCommandSetBlipName(blip)
 	end
 end)
@@ -308,10 +365,20 @@ Citizen.CreateThread(function()
 						ESX.ShowHelpNotification(_U('press_to_switch', v.nameOfLocation))
 
 						if IsControlJustReleased(0, Keys['E']) then
-								TriggerServerEvent('esx_irpidentity:getClientInfo')
+							if IsPedArmed(PlayerPedId(), 4) then
+								TriggerServerEvent('getClientInfo', xPlayer, identifier)
+
+							end
 						end
 					end
 				end
+			end
+		end
+
+		if holdingUp then
+			local storePos = Stores[store].position
+			if Vdist(playerPos.x, playerPos.y, playerPos.z, storePos.x, storePos.y, storePos.z) > Config.MaxDistance then
+				TriggerServerEvent('esx_holdup:tooFar', store)
 			end
 		end
 	end
