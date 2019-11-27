@@ -42,7 +42,7 @@
 	- Possible support for more than 3 character slots
 	- Jobs/Skin/Loadout/Cash/Bank tied to character
 
-## Current Commands
+## Current Commands  (only availaable on v1.0.0)
 	- /register		- Opens the registration/characters selection screen
 	- /charlist		- displays a list of all your characters
 	- /char			- displays your active character
@@ -62,10 +62,12 @@
 	- Decreased  transition times
 	- Cleaned code a bit
 	- Updated ReamMe.md
+	- You can find the most recent updates at the link below
+[ImpulseRP](https://impulserp.com/forumdisplay.php?fid=12)
 ### Coming up...
 	- Adding delete feature
 	- Items/vehicles/proprties bound to character not account.
-	- UI adhustments
+	- UI adjustments
 ## Known Issues as of 11/21/2019
 	- All vehicles , itmes, and property are account bound. Meaning All your toons will share the same vehicles, items, 
 	  and property
@@ -76,15 +78,15 @@
 
 # Goals/Future Updates
 ## Piorities
-	- Add delete character feature
+	- Add delete character feature (working on now)
 	- Make items/property/vehicles bound to character not account
 
 ## Goals/Future Updates
-	- Create specific area for character swapping 
+	- Create specific area for character swapping  (complete)
 	- Add delete chracter feature
-	- Speed up transitioning time
+	- Speed up transitioning time (working on now)
 	- Add more checks to registration 
-	- Code cleanup and 
+	- Code cleanup (constantly working)
 
 ## Other
 	- This code is a bit sloppy and this is my first big release. So please bear with me, I wanted to release this 
