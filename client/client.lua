@@ -5,6 +5,7 @@ local hasIdentity = false
 local isDead = false
 
 ESX = nil
+
 Citizen.CreateThread(function()
 	while ESX == nil do
 		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
@@ -23,6 +24,8 @@ end)
 
 AddEventHandler('playerSpawned', function(spawn)
 	isDead = false
+	SetEntityCoords(PlayerPedId(),339.19, -1394.63, 32.51)
+	--xPlayer.setCoords(339.19, -1394.63, 32.51)
 end)
 
 RegisterNUICallback('escape', function(data, cb)
@@ -74,24 +77,21 @@ end)
 ---------------------------------------------------------------------------------------------------
 
 RegisterNetEvent('updateIdentity')
-AddEventHandler('updateIdentity', function(source, skin)
+AddEventHandler('updateIdentity', function(source, skin)	
 	Citizen.Wait(1000)
 	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
 		TriggerEvent('skinchanger:loadSkin', skin)
+		TriggerServerEvent('loadoutupdate', loadout)
 		TriggerServerEvent('setJob', setJob)
 		TriggerServerEvent('setCash', setCash)
 	end)
 end)
 
+
 ---------------------------------------------------------------------------------------------------
 ----------------------------------VERY IMPORTANT FOR FUNCTIONALITY---------------------------------
 ---------------------------------------------------------------------------------------------------
-	Citizen.CreateThread(function() 
-		while true do
-			Citizen.Wait(10)
-				TriggerServerEvent('esx_irpidentity:getCharacterInformation')
-		end	
-	end)	
+	
 ---------------------------------------------------------------------------------------------------
 ----------------------------------VERY IMPORTANT FOR FUNCTIONALITY---------------------------------
 ---------------------------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ end)
 RegisterNetEvent('esx_irpidentity:setCharacterInformation')
 AddEventHandler('esx_irpidentity:setCharacterInformation', function(firstname1, lastname1, job1, money1, bank1  ,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)	
 xPlayer = ESX.GetPlayerData(source)
-print(xPlayer)
+--print(xPlayer)
 if xPlayer ~= nil then
 	SendNUIMessage({
 		firstname1 = firstname1,
@@ -130,8 +130,6 @@ RegisterNetEvent('esx_irpidentity:showCharacterSelection')
 end)
 
 RegisterNUICallback("CharacterChosen", function(data, cb)
-   -- SetNuiFocus(false,false)
-    --DoScreenFadeOut(500)
     TriggerServerEvent('esx_irpidentity:CharacterChosen', data.charid)
     while not IsScreenFadedOut() do
         Citizen.Wait(10)
@@ -183,7 +181,7 @@ RegisterNUICallback('register', function(data, cb)
 	if reason == "" then
 		TriggerServerEvent('esx_irpidentity:setIdentity', data, myIdentifiers)
 		EnableGui(false)
-		Citizen.Wait(5000)
+		Citizen.Wait(2000)
 		TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
 	else
 		ESX.ShowNotification(reason)
@@ -204,6 +202,7 @@ function verifyName(name)
 	if count ~= nameLength then
 		return 'Your player name contains special characters that are not allowed on this server.'
 	end
+
 	local spacesInName    = 0
 	local spacesWithUpper = 0
 	for word in string.gmatch(name, '%S+') do
@@ -225,14 +224,15 @@ function verifyName(name)
 
 	return ''
 end
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------Updated 11/23/2019-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+local spawning = false
 local store = ""
-local irpblip = nil
+local blipSpawn = nil
 ESX = nil
 
 local Keys = {
@@ -247,35 +247,16 @@ local Keys = {
 	["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
 }
 
-Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-		Citizen.Wait(0)
-	end
-end)
-
-function drawTxt(x,y, width, height, scale, text, r,g,b,a, outline)
-	SetTextFont(0)
-	SetTextScale(scale, scale)
-	SetTextColour(r, g, b, a)
-	SetTextDropshadow(0, 0, 0, 0,255)
-	SetTextDropShadow()
-	if outline then SetTextOutline() end
-
-	BeginTextCommandDisplayText('STRING')
-	AddTextComponentSubstringPlayerName(text)
-	EndTextCommandDisplayText(x - width/2, y - height/2 + 0.005)
-end
 
 RegisterNetEvent('esx_irpidentity:setBlip')
 AddEventHandler('esx_irpidentity:setBlip', function(position)
-	irpblip = AddBlipForCoord(position.x, position.y, position.z)
+	blipSpawn = AddBlipForCoord(position.x, position.y, position.z)
 
-	SetBlipSprite(irpblip, 161)
-	SetBlipScale(irpblip, 2.0)
-	SetBlipColour(irpblip, 3)
+	SetBlipSprite(blipSpawn, 161)
+	SetBlipScale(blipSpawn, 2.0)
+	SetBlipColour(blipSpawn, 3)
 
-	PulseBlip(irpblip)
+	PulseBlip(blipSpawn)
 end)
 
 Citizen.CreateThread(function()
@@ -286,7 +267,7 @@ Citizen.CreateThread(function()
 		SetBlipAsShortRange(blip, true)
 
 		BeginTextCommandSetBlipName("STRING")
-		AddTextComponentString(_U('medical_center'))
+		AddTextComponentString(_U('shop_robbery'))
 		EndTextCommandSetBlipName(blip)
 	end
 end)
@@ -301,7 +282,7 @@ Citizen.CreateThread(function()
 			local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, storePos.x, storePos.y, storePos.z)
 
 			if distance < Config.Marker.DrawDistance then
-				if not holdingUp then
+				if not spawning then
 					DrawMarker(Config.Marker.Type, storePos.x, storePos.y, storePos.z - 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Config.Marker.x, Config.Marker.y, Config.Marker.z, Config.Marker.r, Config.Marker.g, Config.Marker.b, Config.Marker.a, false, false, 2, false, false, false, false)
 
 					if distance < 1.7 then
@@ -309,6 +290,8 @@ Citizen.CreateThread(function()
 
 						if IsControlJustReleased(0, Keys['E']) then
 								TriggerServerEvent('esx_irpidentity:getClientInfo')
+								TriggerServerEvent('saveIdentityBeforeChange')
+							break
 						end
 					end
 				end
@@ -316,3 +299,5 @@ Citizen.CreateThread(function()
 		end
 	end
 end)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
