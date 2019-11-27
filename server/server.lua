@@ -306,6 +306,8 @@ AddEventHandler("getCharacters", function(source, callback)
 	end)
 end)
 		
+		
+
 -----------------------------------------------------------------------------               -----------------------------------------------------------------------------
 ---------                        IMPULSERP                         ---------- DATABASE INFO ------------                         IMPULSERP                      --------- 
 -----------------------------------------------------------------------------			    -----------------------------------------------------------------------------
@@ -337,7 +339,8 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 		print(identifier.source)
 	Citizen.Wait(3000)
 	local xPlayer = ESX.GetPlayerFromId(source)
-	end)
+	--	TriggerEvent('setCharacterData', xPlayer.source)
+end)
 
 RegisterServerEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(identifier, data, callback)
@@ -363,6 +366,7 @@ AddEventHandler('updateIdentity', function(identifier, data, callback)
 	Citizen.Wait(1000)
 	TriggerClientEvent('updateIdentity', -1, skin)
 	Citizen.Wait(200)
+
 end)
 
 
@@ -488,7 +492,7 @@ AddEventHandler("setJob", function(setJob)
 			local job				= result[1].job
 			local grade				= result[1].job_grade
 		if xPlayer then
-			TriggerEvent('es:playerLoaded', xPlayer.source)
+--			TriggerEvent('es:playerLoaded', xPlayer.source)
 			if ESX.DoesJobExist(job, grade) then
 				xPlayer.setJob(job, grade)
 			else
@@ -504,7 +508,7 @@ AddEventHandler("setJob", function(setJob)
 end)
 
 RegisterServerEvent('loadoutupdate')
-AddEventHandler('loadoutupdate', function(loadout)
+AddEventHandler('esx:loadoutupdate', function(loadout)
 	local loadout1 = {}
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local identifier = GetPlayerIdentifiers(source)[1]
@@ -607,36 +611,6 @@ AddEventHandler('esx_irpidentity:setIdentity', function(data, myIdentifiers)
 		end
 	end)
 end)
-RegisterServerEvent('esx_irpidentity:getCharacterInformation')
-AddEventHandler('esx_irpidentity:getCharacterInformation', function()
-TriggerEvent('es:addCommand', 'testing1', function(source, args, user)	
-	TriggerEvent('getCharacters', source, function(data)
-		local source = source
-		local xPlayer = ESX.GetPlayerFromId(source)
-		if xPlayer ~= nil then
-			local source		= source
-			local firstname1 	= data.firstname1
-			local lastname1 	= data.lastname1
-			local job1			= data.job1
-			local money1 		= data.money1
-			local bank1 		= data.bank1
-			local firstname2 	= data.firstname2
-			local lastname2 	= data.lastname2
-			local job2			= data.job2
-			local money2 		= data.money2
-			local bank2 		= data.bank2
-			local firstname3 	= data.firstname3
-			local lastname3 	= data.lastname3
-			local job3			= data.job3
-			local money3 		= data.money3
-			local bank3 		= data.bank3
-
-			TriggerClientEvent('esx_irpidentity:setCharacterInformation',  source, firstname1, lastname1, job1, money1, bank1,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)		
-			end
-		end)
-	end)
-end)
-
 RegisterServerEvent("esx_irpidentity:CharacterChosen")
 AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 	local source = source
