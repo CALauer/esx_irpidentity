@@ -630,7 +630,7 @@ end)
 
 RegisterServerEvent('esx_irpidentity:getCharacterInformation')
 AddEventHandler('esx_irpidentity:getCharacterInformation', function()
-TriggerEvent('es:addCommand', 'testing1blindfold', function(source, args, user)	
+TriggerEvent('es:addCommand', 'testing1', function(source, args, user)	
 	TriggerEvent('getCharacters', source, function(data)
 		local source = source
 		local xPlayer = ESX.GetPlayerFromId(source)
@@ -662,7 +662,8 @@ AddEventHandler('deleteCharacter', function(charid)
 	local source = source
 	local charNumber = tonumber(charid)
 	local xPlayer = ESX.GetPlayerFromId(source)
-	print(charNumber)
+	print(xPlayer)
+	print(charid)
 	TriggerEvent('getCharacters', source, function(data)	
 		if charNumber == 1 and xPlayer ~= nil then
 			local data = {
@@ -875,9 +876,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 			end
 		end
 	end)
-end, function(source, args, user)
-	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
-end, {help = "Switch between character", params = {{name = "char", help = "the character id, ranges from 1-3"}}})
+end)
 --------------------------------------------------------------------------------------------Old Regster Command-----------------------------------------------------------------------------------------------
 --[[TriggerEvent('es:addCommand', 'register', function(source, args, user)
 	TriggerEvent('getCharacters', source, function(data)
