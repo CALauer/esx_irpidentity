@@ -68,6 +68,7 @@ Citizen.CreateThread(function()
 			DisableControlAction(0, 245, true)
 			DisableControlAction(0, 309, true)
 			DisableControlAction(0, 246, true) -- disable y key
+			DisableControlAction(0, 303, true) -- disable u key
 		end
 	end
 end)
