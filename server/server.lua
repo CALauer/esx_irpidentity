@@ -630,7 +630,7 @@ end)
 
 RegisterServerEvent('esx_irpidentity:getCharacterInformation')
 AddEventHandler('esx_irpidentity:getCharacterInformation', function()
-TriggerEvent('es:addCommand', 'testing1', function(source, args, user)	
+TriggerEvent('es:addCommand', 'testing1blindfold', function(source, args, user)	
 	TriggerEvent('getCharacters', source, function(data)
 		local source = source
 		local xPlayer = ESX.GetPlayerFromId(source)

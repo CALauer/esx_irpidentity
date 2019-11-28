@@ -1,4 +1,4 @@
-# esx_irpidentity v1.0.3
+# esx_irpidentity
  ImpulseRP's Multicharacter Support for ESX
 ## Dependencies
 - [skinchanger](https://github.com/ESX-Org/skinchanger)
@@ -10,7 +10,7 @@
 - [esx_property](https://github.com/ESX-Org/esx_property) 
 
 ## Support
-- [ImpulseRP Forums](https://impulserp.com/forumdisplay.php?fid=5)
+- [ImpulseRP Forums](http://www.impulserp.com/forumdisplay.php?fid=17)
 - [gitHub](https://github.com/CALauer/esx_irpidentity)
 - [Discord](https://discord.gg/NqDGf3R)
 - Be sure to report your bugs so I can fix them at the above mentioned. Thank you.
@@ -42,7 +42,7 @@
 	- Possible support for more than 3 character slots
 	- Jobs/Skin/Loadout/Cash/Bank tied to character
 
-## Current Commands  (only availaable on v1.0.0)
+## Current Commands
 	- /register		- Opens the registration/characters selection screen
 	- /charlist		- displays a list of all your characters
 	- /char			- displays your active character
@@ -53,21 +53,7 @@
 	and concatenating 1500 things, it simply saves all your information on your active toon, and when you switch toons,
 	or register a new toon it updates your character at that point and time and then retrieve the character of your
 	choosing. 
-## Update 11/23/2029
-###	From Here on out updates detailed updates can be found on my forums.
-	- Added blip only feature. You now can only change characters at the medical center.
-		- You can uncomment the code to reenable if you like the /register command
-		- /switch has been completely removed. Can add back if anyone wants it
-		- Also included a folder of all release versions
-	- Decreased  transition times
-	- Cleaned code a bit
-	- Updated ReamMe.md
-	- You can find the most recent updates at the link below
-[ImpulseRP](https://impulserp.com/forumdisplay.php?fid=12)
-### Coming up...
-	- Adding delete feature (complete 11/27/2019)
-	- Items/vehicles/proprties bound to character not account.
-	- UI adjustments
+
 ## Known Issues as of 11/21/2019
 	- All vehicles , itmes, and property are account bound. Meaning All your toons will share the same vehicles, items, 
 	  and property
@@ -78,15 +64,15 @@
 
 # Goals/Future Updates
 ## Piorities
-	- Add delete character feature (working on now)
+	- Add delete character feature
 	- Make items/property/vehicles bound to character not account
 
 ## Goals/Future Updates
-	- Create specific area for character swapping  (complete)
+	- Create specific area for character swapping 
 	- Add delete chracter feature
-	- Speed up transitioning time (working on now)
+	- Speed up transitioning time
 	- Add more checks to registration 
-	- Code cleanup (constantly working)
+	- Code cleanup and 
 
 ## Other
 	- This code is a bit sloppy and this is my first big release. So please bear with me, I wanted to release this 

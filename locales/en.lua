@@ -1,5 +1,5 @@
 Locales['en'] = {
-  ['medical_center'] = 'Medical Center',
+  ['shop_robbery'] = 'shop Robbery',
   ['press_to_switch'] = 'press ~INPUT_CONTEXT~ to ~b~switch characters~s~',
 
 }
