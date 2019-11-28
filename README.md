@@ -1,4 +1,4 @@
-# esx_irpidentity
+# esx_irpidentity v1.0.3
  ImpulseRP's Multicharacter Support for ESX
 ## Dependencies
 - [skinchanger](https://github.com/ESX-Org/skinchanger)
@@ -65,7 +65,7 @@
 	- You can find the most recent updates at the link below
 [ImpulseRP](https://impulserp.com/forumdisplay.php?fid=12)
 ### Coming up...
-	- Adding delete feature
+	- Adding delete feature (complete 11/27/2019)
 	- Items/vehicles/proprties bound to character not account.
 	- UI adjustments
 ## Known Issues as of 11/21/2019

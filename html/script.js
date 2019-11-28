@@ -39,22 +39,18 @@ $(function () {
     });
 
     $("#play_button").click(function () {
-        var e = "test";
-        console.log(e);
-
         $.post("http://esx_irpidentity/CharacterChosen", JSON.stringify({
             charid: $('.active-char').attr("data-charid")
         }));
         irpidentity.CloseUI();
-
     });
 
 
-    $("#deletechar").click(function () {
-        $.post("http://esx_irpidentitys/DeleteCharacter", JSON.stringify({
+    $("#delete_button").click(function () {
+        $.post("http://esx_irpidentity/DeleteCharacter", JSON.stringify({
             charid: $('.active-char').attr("data-charid")
         }));
-        esx_irpidentity.CloseUI();
+        irpidentity.CloseUI();
     });
     (() => {
         irpidentity = {};

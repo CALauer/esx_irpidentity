@@ -24,7 +24,7 @@ end)
 
 AddEventHandler('playerSpawned', function(spawn)
 	isDead = false
-	SetEntityCoords(PlayerPedId(),339.19, -1394.63, 32.51)
+	SetEntityCoords(PlayerPedId(),337.66, -1396.79, 32.51)
 	--xPlayer.setCoords(339.19, -1394.63, 32.51)
 end)
 
@@ -72,10 +72,6 @@ Citizen.CreateThread(function()
 	end
 end)
 
----------------------------------------------------------------------------------------------------
-----------------------------------VERY IMPORTANT FOR FUNCTIONALITY---------------------------------
----------------------------------------------------------------------------------------------------
-
 RegisterNetEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(source, skin)	
 	Citizen.Wait(1000)
@@ -86,15 +82,10 @@ AddEventHandler('updateIdentity', function(source, skin)
 		TriggerServerEvent('setCash', setCash)
 	end)
 end)
-
-
----------------------------------------------------------------------------------------------------
-----------------------------------VERY IMPORTANT FOR FUNCTIONALITY---------------------------------
----------------------------------------------------------------------------------------------------
-	
----------------------------------------------------------------------------------------------------
-----------------------------------VERY IMPORTANT FOR FUNCTIONALITY---------------------------------
----------------------------------------------------------------------------------------------------
+RegisterNetEvent('GetPlayerInformation')
+AddEventHandler('GetPlayerInformation', function(identifier)
+	TriggerServerEvent('removeLoadout', xPlayer, loadout)
+end)
 
 RegisterNetEvent('esx_irpidentity:setCharacterInformation')
 AddEventHandler('esx_irpidentity:setCharacterInformation', function(firstname1, lastname1, job1, money1, bank1  ,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)	
@@ -137,6 +128,17 @@ RegisterNUICallback("CharacterChosen", function(data, cb)
     cb("ok")
 end)
 
+RegisterNUICallback("DeleteCharacter", function(data, cb)
+    SetNuiFocus(false,false)
+    TriggerServerEvent('deleteCharacter', data.charid)
+	print(charid)
+	print("helllllo")
+    while not IsScreenFadedOut() do
+        Citizen.Wait(10)
+    end
+    cb("ok")
+end)
+
 RegisterNetEvent('esx_irpidentity:showRegisterIdentity')
 AddEventHandler('esx_irpidentity:showRegisterIdentity', function()
 	if not isDead then
@@ -154,8 +156,7 @@ RegisterNUICallback('register', function(data, cb)
 	myIdentity = data
 	for theData, value in pairs(myIdentity) do
 		if theData == "firstname" or theData == "lastname" then
-			reason = verifyName(value)
-			
+			reason = verifyName(value)			
 			if reason ~= "" then
 				break
 			end
@@ -177,12 +178,13 @@ RegisterNUICallback('register', function(data, cb)
 			end
 		end
 	end
-	
+
 	if reason == "" then
 		TriggerServerEvent('esx_irpidentity:setIdentity', data, myIdentifiers)
 		EnableGui(false)
 		Citizen.Wait(2000)
 		TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
+		TriggerEvent('GetPlayerInformation')
 	else
 		ESX.ShowNotification(reason)
 	end
@@ -224,12 +226,7 @@ function verifyName(name)
 
 	return ''
 end
--------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
--------------------------------------------------------------------------------------------------MERGED-----------------------------------------------------------------------------------------------
+
 local spawning = false
 local store = ""
 local blipSpawn = nil
@@ -265,7 +262,6 @@ Citizen.CreateThread(function()
 		SetBlipSprite(blip, 156)
 		SetBlipScale(blip, 0.8)
 		SetBlipAsShortRange(blip, true)
-
 		BeginTextCommandSetBlipName("STRING")
 		AddTextComponentString(_U('shop_robbery'))
 		EndTextCommandSetBlipName(blip)
