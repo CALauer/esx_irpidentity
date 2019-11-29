@@ -1,0 +1,12 @@
+11/29/2019 - 7:30pm | v1.0.4
+	*changed notification from advanced to standard. This was to prevent the constant beeping when selecting skins
+	*updated locales to match standard ^
+	*changed blip
+	*Added Registration center to map for blip
+//******Note that if you are debugging you can restart the resource as long your HUD is not up******\\
+			//******If you do this while the HUD is up, your game will freeze******\\
+	*Added registration check
+		- You can no longer register more than three characters
+		- If you try to register more than three characters, you will get an alert via chat message
+		- (Removed)Added timer to swapping/registering. This will allow for esx to properly update your character based on the provided information. May not be necessary but jsut an added
+		- Fixed character registration saves. Meaning, you will not need to wait for ESX to update your character

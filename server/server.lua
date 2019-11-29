@@ -36,9 +36,7 @@ AddEventHandler('onResourceStart', function(resource)
 				steamid  = xPlayer.identifier,
 				playerid = xPlayer.source
 			}
-
 			TriggerClientEvent('esx_irpidentity:saveID', xPlayer.source, myID)
-
 			getIdentity(xPlayer.source, function(data)
 				if data.firstname == '' then
 					TriggerClientEvent('esx_irpidentity:identityCheck', xPlayer.source, false)
@@ -308,25 +306,34 @@ end)
 
 RegisterServerEvent('setIdentity')
 AddEventHandler('setIdentity', function(identifier, data, callback)
-	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height)', {
+	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade)', {
 		['@identifier']		= identifier,
 		['@firstname']		= data.firstname,
 		['@lastname']		= data.lastname,
 		['@dateofbirth']	= data.dateofbirth,
 		['@sex']			= data.sex,
-		['@height']			= data.height
+		['@height']			= data.height,
+		['@bank']			= "0",
+		['@money']			= "0",
+		['@job']			= "unemployed",
+		['@job_grade']		= "0"
 	}, function(rowsChanged)
 		if callback then
 			callback(true)
 		end
-	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height  WHERE identifier = @identifier', {
+	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `bank` = @bank, `money` = @money, `job` = @job, `job_grade` = @job_grade WHERE identifier = @identifier', {
 		['@identifier']		= identifier,
 		['@firstname']		= data.firstname,
 		['@lastname']		= data.lastname,
 		['@dateofbirth']	= data.dateofbirth,
 		['@sex']			= data.sex,
-		['@height']			= data.height
-	}) 
+		['@height']			= data.height,
+		['@bank']			= "0",
+		['@money']			= "0",
+		['@job']			= "unemployed",
+		['@job_grade']		= "0"
+	})
+	Citizen.Wait(1000)
 	end)
 end)
 
@@ -359,7 +366,7 @@ end)
 RegisterServerEvent('saveIdentity')
 AddEventHandler('saveIdentity', function (identifier, data, callback)
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
-		['@identifier'] = identifier}, function(data)
+		['@identifier'] = identifier}, function(data) -- gets identifier from database 
 	MySQL.Async.execute('UPDATE `characters` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
 		['@identifier']					= identifier,
 		['@firstname']					= data[1].firstname,
@@ -382,12 +389,14 @@ AddEventHandler('saveIdentity', function (identifier, data, callback)
 		Citizen.Wait(1000)
 	end)
 end)
+	-- Save most recent loadout/money/ect to both characters and user tables
 RegisterServerEvent('saveIdentityBeforeChange')
 AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback)
-	local identifier = GetPlayerIdentifiers(source)[1]
+	local identifier = GetPlayerIdentifiers(source)[1] --grabs ingame identifier else will not find it
+	local xPlayer = ESX.GetPlayerFromId(source)
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data)
-	MySQL.Async.execute('UPDATE `characters` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
+	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
 		['@identifier']					= identifier,
 		['@firstname']					= data[1].firstname,
 		['@lastname']					= data[1].lastname,
@@ -396,9 +405,9 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 		['@height']						= data[1].height,
 		['@skin']						= data[1].skin,
 		['@money']						= data[1].money,
-		['@job']						= data[1].job,
-		['@job_grade']					= data[1].job_grade,
-		['@loadout']					= data[1].loadout,
+		['@job']						= xPlayer.job.name,
+		['@job_grade']					= xPlayer.job.grade,
+		['@loadout']					= json.encode(xPlayer.getLoadout()),
 		['@bank']						= data[1].bank,
 		['@permission_level']			= data[1].permission_level,
 		['@position']					= data[1].position
@@ -408,50 +417,41 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 			end
 		end)
 		Citizen.Wait(500)
+		MySQL.Async.execute('UPDATE `characters` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
+		['@identifier']					= identifier,
+		['@firstname']					= data[1].firstname,
+		['@lastname']					= data[1].lastname,
+		['@dateofbirth']				= data[1].dateofbirth,
+		['@sex']						= data[1].sex,
+		['@height']						= data[1].height,
+		['@skin']						= data[1].skin,
+		['@money']						= data[1].money,
+		['@job']						= xPlayer.job.name,
+		['@job_grade']					= xPlayer.job.grade,
+		['@loadout']					= json.encode(xPlayer.getLoadout()),
+		['@bank']						= data[1].bank,
+		['@permission_level']			= data[1].permission_level,
+		['@position']					= data[1].position
+	}, function(rowsChanged)
+			if callback then
+				callback(true)
+		end
+	end)
 end)
 RegisterNetEvent('deleteCharacter')
 AddEventHandler('deleteCharacter', function (identifier, data, callback)
-	MySQL.Async.execute('DELETE FROM characters WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height AND skin = @skin AND money = @money AND job = @job AND job_grade = @job_grade AND loadout = @loadout AND bank = @bank AND permission_level = @permission_level AND position = @position', {
+	MySQL.Async.execute('DELETE FROM characters WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
 		['@identifier']					= identifier,
 		['@firstname']					= data.firstname,
 		['@lastname']					= data.lastname,
 		['@dateofbirth']				= data.dateofbirth,
 		['@sex']						= data.sex,
-		['@height']						= data.height,
-		['@skin']						= data.skin,
-		['@money']						= data.money,
-		['@job']						= data.job,
-		['@job_grade']					= data.job_grade,
-		['@loadout']					= data.loadout,
-		['@bank']						= data.bank,
-		['@permission_level']			= data.permission_level,
-		['@position']					= data.position
+		['@height']						= data.height
 	}, function(rowsChanged)
-		if callback then
-			callback(true)
+				if callback then
+				callback(true)
 			end
 		end)
-	end)
-end)
-
-RegisterServerEvent('removeLoadout')
-AddEventHandler('removeLoadout', function(xPlayer, loadout)
-	local loadout1 = {}
-	local xPlayer = ESX.GetPlayerFromId(source)
-	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT * FROM `users` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier,
-	}, function(result)
-		if result[1].firstname ~= nil then
-			local data = {
-				identifier			= result[1].identifier,
-			}
-			local loadout = json.decode(result[1].loadout)
-				for i=1, #xPlayer.loadout, 1 do
-				xPlayer.removeWeapon(xPlayer.loadout[i].name)
-				end
-			end
-			print("loadout is being removed")
 	end)
 end)
 
@@ -483,8 +483,30 @@ AddEventHandler('esx_irpidentity:getClientInfo', function(identifier)
 	end)
 end)
 
+RegisterServerEvent('removeLoadout')
+AddEventHandler('removeLoadout', function(xPlayer, loadout)
+	local loadout1 = {}
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local identifier = GetPlayerIdentifiers(source)[1]
+	MySQL.Async.fetchAll('SELECT * FROM `users` WHERE `identifier` = @identifier', {
+		['@identifier'] = identifier,
+	}, function(result)
+		if result[1].firstname ~= nil then
+			local data = {
+				identifier			= result[1].identifier,
+			}
+			local loadout = json.decode(result[1].loadout)
+				for i=1, #xPlayer.loadout, 1 do
+				xPlayer.removeWeapon(xPlayer.loadout[i].name)
+				end
+			end
+			print("loadout is being removed")
+	end)
+end)
+
 RegisterServerEvent('setJob')
 AddEventHandler("setJob", function(setJob)
+print("Working on setting character informatin")
  local playerLoadout = {}
 
 	local xPlayer = ESX.GetPlayerFromId(source)
@@ -492,8 +514,9 @@ AddEventHandler("setJob", function(setJob)
 	MySQL.Async.fetchAll('SELECT * FROM `users` WHERE `identifier` = @identifier', {
 		['@identifier'] = identifier,
 		['@loadout']	= loadout,
+
 	}, function(result)
-		if result[1].firstname ~= nil then
+		if result[1]~= nil then
 			local data = {
 				identifier			= result[1].identifier,
 				job 				= result[1].job,
@@ -502,21 +525,30 @@ AddEventHandler("setJob", function(setJob)
 				bank				= result[1].bank,
 				loadout				= result[1].loadout,
 			}
-			local loadout			= json.decode(result[1].loadout)
+			local loadout = json.decode(result[1].loadout)
 			local bank				= tonumber(result[1].bank)
 			local money				= tonumber(result[1].money)
 			local job				= result[1].job
 			local grade				= result[1].job_grade
 		if xPlayer then
-	--		TriggerEvent('es:playerLoaded', xPlayer.source)
 			if ESX.DoesJobExist(job, grade) then
 				xPlayer.setJob(job, grade)
+				xPlayer.setBankBalance(bank)
+				print(bank)
+				xPlayer.setMoney(money)
 			else
 				TriggerClientEvent('chat:addMessage', source, { args = { '^1SYSTEM', 'That job does not exist.' } })
 			end
 				if xPlayer then
-					xPlayer.setBankBalance(bank)
-					xPlayer.setMoney(money)			
+					for i=1, #xPlayer.loadout, 1 do
+						xPlayer.removeWeapon(xPlayer.loadout[i].name)
+					end
+					for i=1, #loadout, 1 do
+						if loadout[i].label ~= nil then
+						xPlayer.addWeapon(loadout[i].name, loadout[i].ammo)
+					end
+				end
+
 				end
 			end
 		end
@@ -618,17 +650,25 @@ TriggerEvent('es:addCommand', 'testing1', function(source, args, user)
 		end)
 	end)
 end)
-RegisterServerEvent("deleteCharacter")
-AddEventHandler('deleteCharacter', function(charid)
+
+ESX.RegisterServerCallback('esx_irpidentity:characterCheck', function(source, check)
+	TriggerEvent('getCharacters', source, function(data)
+		if data.firstname3 == '' then
+		check(true)
+		elseif data.firstname3 ~= '' then
+		check(false)
+		print(check)
+		end
+	end)
+end)
+RegisterServerEvent("deleteCharacters")
+AddEventHandler('deleteCharacters', function(charid)
 	local source = source
 	local charNumber = tonumber(charid)
 	local xPlayer = ESX.GetPlayerFromId(source)
-	print(xPlayer)
-	print(charid)
 	TriggerEvent('getCharacters', source, function(data)	
 		if charNumber == 1 and xPlayer ~= nil then
 			local data = {
-				identifier					= data.identifier,
 				firstname					= data.firstname1,
 				lastname					= data.lastname1,
 				dateofbirth					= data.dateofbirth1,
@@ -645,7 +685,7 @@ AddEventHandler('deleteCharacter', function(charid)
 				position					= data.position1
 
 			}
-			if data.firstname ~= '' then
+			if data.firstname ~= '' then				
 				TriggerEvent('deleteCharacter', GetPlayerIdentifiers(source)[1], data, function(callback)
 					Citizen.Wait(1000)
 					if callback then
@@ -657,10 +697,9 @@ AddEventHandler('deleteCharacter', function(charid)
 			else
 				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 1!' } })
 			end
-		elseif charNumber == 2 then
 
+		elseif charNumber == 2 then
 			local data = {
-				identifier					= data.identifier,
 				firstname					= data.firstname2,
 				lastname					= data.lastname2,
 				dateofbirth					= data.dateofbirth2,
@@ -677,9 +716,9 @@ AddEventHandler('deleteCharacter', function(charid)
 				position					= data.position2
 			}
 
-			if data.firstname ~= '' then
+			if data.firstname ~= '' then				
 				TriggerEvent('deleteCharacter', GetPlayerIdentifiers(source)[1], data, function(callback)
-					Citizen.Wait(2000)
+					Citizen.Wait(1000)
 					if callback then
 						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You have deleted your character in slot 2' } })
 					else
@@ -691,9 +730,7 @@ AddEventHandler('deleteCharacter', function(charid)
 			end
 
 		elseif charNumber == 3 then
-
 			local data = {
-				identifier					= data.identifier,
 				firstname					= data.firstname3,
 				lastname					= data.lastname3,
 				dateofbirth					= data.dateofbirth3,
@@ -709,7 +746,7 @@ AddEventHandler('deleteCharacter', function(charid)
 				is_dead						= data.is_dead3,
 				position					= data.position3
 			}
-			if data.firstname ~= '' then
+			if data.firstname ~= '' then				
 				TriggerEvent('deleteCharacter', GetPlayerIdentifiers(source)[1], data, function(callback)
 					Citizen.Wait(1000)
 					if callback then
@@ -723,10 +760,7 @@ AddEventHandler('deleteCharacter', function(charid)
 			end
 		end
 	end)
-end, function(source, args, user)
-	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
-end, {help = "Switch between character", params = {{name = "char", help = "the character id, ranges from 1-3"}}})
-
+end)
 RegisterServerEvent("esx_irpidentity:CharacterChosen")
 AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 	local source = source

@@ -25,7 +25,6 @@ end)
 AddEventHandler('playerSpawned', function(spawn)
 	isDead = false
 	SetEntityCoords(PlayerPedId(),337.66, -1396.79, 32.51)
-	--xPlayer.setCoords(339.19, -1394.63, 32.51)
 end)
 
 RegisterNUICallback('escape', function(data, cb)
@@ -35,7 +34,6 @@ end)
 function EnableGui(state)
 	SetNuiFocus(state, state)
 	guiEnabled = state
-
 	SendNUIMessage({
 		type = "enableui",
 		enable = state
@@ -78,14 +76,14 @@ AddEventHandler('updateIdentity', function(source, skin)
 	Citizen.Wait(1000)
 	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
 		TriggerEvent('skinchanger:loadSkin', skin)
-		TriggerServerEvent('loadoutupdate', loadout)
+	--	TriggerServerEvent('loadoutupdate', loadout)
 		TriggerServerEvent('setJob', setJob)
-		TriggerServerEvent('setCash', setCash)
 	end)
 end)
 RegisterNetEvent('GetPlayerInformation')
 AddEventHandler('GetPlayerInformation', function(identifier)
 	TriggerServerEvent('removeLoadout', xPlayer, loadout)
+	TriggerServerEvent('setJob', setJob)
 end)
 
 RegisterNetEvent('esx_irpidentity:setCharacterInformation')
@@ -131,9 +129,7 @@ end)
 
 RegisterNUICallback("DeleteCharacter", function(data, cb)
     SetNuiFocus(false,false)
-    TriggerServerEvent('deleteCharacter', data.charid)
-	print(charid)
-	print("helllllo")
+    TriggerServerEvent('deleteCharacters', data.charid)
     while not IsScreenFadedOut() do
         Citizen.Wait(10)
     end
@@ -153,42 +149,53 @@ AddEventHandler('esx_irpidentity:saveID', function(data)
 end)
 
 RegisterNUICallback('register', function(data, cb)
-	local reason = ""
-	myIdentity = data
-	for theData, value in pairs(myIdentity) do
-		if theData == "firstname" or theData == "lastname" then
-			reason = verifyName(value)			
-			if reason ~= "" then
-				break
-			end
-		elseif theData == "dateofbirth" then
-			if value == "invalid" then
-				reason = "Invalid date of birth!"
-				break
-			end
-		elseif theData == "height" then
-			local height = tonumber(value)
-			if height then
-				if height > 200 or height < 140 then
+ESX.TriggerServerCallback('esx_irpidentity:characterCheck', function(check)
+	print(check)
+	if check == false then 
+	EnableGui(false)
+	TriggerEvent('chat:addMessage', {
+	 color = { 255, 0, 0},
+	 multiline = true,
+	 args = {"[ImpulseRP]", "You already have three characters. Registration failed."}})
+	elseif check == true then
+		local reason = ""
+		myIdentity = data
+		for theData, value in pairs(myIdentity) do
+			if theData == "firstname" or theData == "lastname" then
+				reason = verifyName(value)			
+				if reason ~= "" then
+					break
+				end
+			elseif theData == "dateofbirth" then
+				if value == "invalid" then
+					reason = "Invalid date of birth!"
+					break
+				end
+			elseif theData == "height" then
+				local height = tonumber(value)
+				if height then
+					if height > 200 or height < 140 then
+						reason = "Unacceptable player height!"
+						break
+					end
+				else
 					reason = "Unacceptable player height!"
 					break
 				end
-			else
-				reason = "Unacceptable player height!"
-				break
 			end
 		end
-	end
 
-	if reason == "" then
-		TriggerServerEvent('esx_irpidentity:setIdentity', data, myIdentifiers)
-		EnableGui(false)
-		Citizen.Wait(2000)
-		TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
-		TriggerEvent('GetPlayerInformation')
-	else
-		ESX.ShowNotification(reason)
-	end
+		if reason == "" then
+			TriggerServerEvent('esx_irpidentity:setIdentity', data, myIdentifiers)
+			EnableGui(false)
+			Citizen.Wait(2000)
+			TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
+			TriggerEvent('GetPlayerInformation')
+		else
+			ESX.ShowNotification(reason)
+		end
+		end
+	end)
 end)
 function verifyName(name)
 	-- Don't allow short user names
@@ -246,49 +253,49 @@ local Keys = {
 }
 
 
-RegisterNetEvent('esx_irpidentity:setBlip')
-AddEventHandler('esx_irpidentity:setBlip', function(position)
-	blipSpawn = AddBlipForCoord(position.x, position.y, position.z)
-
-	SetBlipSprite(blipSpawn, 161)
-	SetBlipScale(blipSpawn, 2.0)
-	SetBlipColour(blipSpawn, 3)
-
-	PulseBlip(blipSpawn)
-end)
 
 Citizen.CreateThread(function()
-	for k,v in pairs(Stores) do
+	for k,v in pairs(Spawn) do
 		local blip = AddBlipForCoord(v.position.x, v.position.y, v.position.z)
-		SetBlipSprite(blip, 156)
-		SetBlipScale(blip, 0.8)
+		SetBlipSprite(blip, 467)
+		SetBlipScale(blip, 1.5)
+		SetBlipDisplay(blip, 4)
 		SetBlipAsShortRange(blip, true)
+		SetBlipColour (blip, 74)
 		BeginTextCommandSetBlipName("STRING")
-		AddTextComponentString(_U('shop_robbery'))
+		AddTextComponentSubstringPlayerName(_U('spawn_location'))
 		EndTextCommandSetBlipName(blip)
 	end
 end)
 
+local blipValue = true
 Citizen.CreateThread(function()
 	while true do
-		Citizen.Wait(1)
+		Citizen.Wait(0)
 		local playerPos = GetEntityCoords(PlayerPedId(), true)
-
-		for k,v in pairs(Stores) do
-			local storePos = v.position
-			local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, storePos.x, storePos.y, storePos.z)
+		for k,v in pairs(Spawn) do
+			local spawnPos = v.position
+			local distance = Vdist(playerPos.x, playerPos.y, playerPos.z, spawnPos.x, spawnPos.y, spawnPos.z)
 
 			if distance < Config.Marker.DrawDistance then
 				if not spawning then
-					DrawMarker(Config.Marker.Type, storePos.x, storePos.y, storePos.z - 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Config.Marker.x, Config.Marker.y, Config.Marker.z, Config.Marker.r, Config.Marker.g, Config.Marker.b, Config.Marker.a, false, false, 2, false, false, false, false)
+					DrawMarker(Config.Marker.Type, spawnPos.x, spawnPos.y, spawnPos.z - 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Config.Marker.x, Config.Marker.y, Config.Marker.z, Config.Marker.r, Config.Marker.g, Config.Marker.b, Config.Marker.a, false, false, 2, false, false, false, false)
 
 					if distance < 1.7 then
-						ESX.ShowHelpNotification(_U('press_to_switch', v.nameOfLocation))
+						ESX.ShowNotification(_U('press_to_switch', v.nameOfLocation))
 
 						if IsControlJustReleased(0, Keys['E']) then
-								TriggerServerEvent('esx_irpidentity:getClientInfo')
-								TriggerServerEvent('saveIdentityBeforeChange')
-							break
+							blipValue = false
+							TriggerServerEvent('esx_irpidentity:getClientInfo')
+							TriggerServerEvent('saveIdentityBeforeChange')
+						--[[		TriggerEvent('chat:addMessage', {																	---- Uncomment to add timer			
+								color = { 255, 0, 0},																					---- Uncomment to add timer	
+								multiline = true,																						---- Uncomment to add timer	
+								args = {"[ImpulseRP]", "You must wait 5 mintues before registering a new character, or switching"}})	---- Uncomment to add timer	
+								Wait(300000)	]]--																					---- Uncomment to add timer	
+							elseif not IsControlJustReleased(0, Keys['E']) then											
+ 							blipValue = true																						
+
 						end
 					end
 				end
