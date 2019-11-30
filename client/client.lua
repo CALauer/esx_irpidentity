@@ -25,6 +25,7 @@ end)
 AddEventHandler('playerSpawned', function(spawn)
 	isDead = false
 	SetEntityCoords(PlayerPedId(),337.66, -1396.79, 32.51)
+	--TriggerServerEvent('esx_irpidentity:getClientInfo')  ---Add to config
 end)
 
 RegisterNUICallback('escape', function(data, cb)
@@ -79,6 +80,10 @@ AddEventHandler('updateIdentity', function(source, skin)
 	--	TriggerServerEvent('loadoutupdate', loadout)
 		TriggerServerEvent('setJob', setJob)
 	end)
+end)
+RegisterNetEvent('saveCharacter')
+AddEventHandler('saveCharacter', function(saveCharacter)	
+	TriggerServerEvent('saveCharacter', saveCharacter)
 end)
 RegisterNetEvent('GetPlayerInformation')
 AddEventHandler('GetPlayerInformation', function(identifier)

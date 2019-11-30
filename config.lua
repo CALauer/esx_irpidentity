@@ -7,7 +7,7 @@ Config.Marker = {
 	DrawDistance = 15.0, Type = 1    -- default circle type, low draw distance due to indoors area
 }
 
-Stores = {
+Spawn = {
 	["medical_center"] = {
 		position = { x = 339.19, y = -1394.63, z = 32.51 },
 		reward = math.random(5000, 35000),
