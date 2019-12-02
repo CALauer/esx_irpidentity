@@ -10,3 +10,12 @@
 		- If you try to register more than three characters, you will get an alert via chat message
 		- (Removed)Added timer to swapping/registering. This will allow for esx to properly update your character based on the provided information. May not be necessary but jsut an added
 		- Fixed character registration saves. Meaning, you will not need to wait for ESX to update your character
+//******STARTED INVENTORY 11/29/2019******\\
+	*Added get inventory fromd database
+	*save item to database
+	*save item to character
+	*save item to user
+	*update user inventory
+	*update character inventory
+	*update player inventory
+

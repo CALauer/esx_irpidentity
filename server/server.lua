@@ -58,6 +58,7 @@ function getIdentity(source, callback)
 		if result[1].firstname ~= nil then
 			local data = {
 				identifier				= result[1].identifier,
+				irpid					= result[1].irpid,
 				firstname				= result[1].firstname,
 				lastname				= result[1].lastname,
 				dateofbirth				= result[1].dateofbirth,
@@ -78,6 +79,7 @@ function getIdentity(source, callback)
 		else
 			local data = {
 				identifier				=  '',
+				irpid					=  '',
 				firstname3				=  '',
 				lastname3				=  '',
 				dateofbirth3			=  '',
@@ -107,6 +109,8 @@ AddEventHandler("getCharacters", function(source, callback)
 	}, function(result)
 		if result[1] and result[2] and result[3] then
 			local data = {
+				identifier				= result[1].identifier,
+				irpid1					= result[1].irpid,
 				firstname1				= result[1].firstname,
 				lastname1				= result[1].lastname,
 				dateofbirth1			= result[1].dateofbirth,
@@ -121,6 +125,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level1 		= result[1].permission_level,
 				is_dead1 				= result[1].last_property,
 				position1				= result[1].position,
+				irpid2					= result[1].irpid,
 				firstname2				= result[2].firstname,
 				lastname2				= result[2].lastname,
 				dateofbirth2			= result[2].dateofbirth,
@@ -135,6 +140,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level2 		= result[2].permission_level,
 				is_dead2 				= result[2].last_property,
 				position2				= result[2].position,
+				irpid3					= result[3].irpid,
 				firstname3				= result[3].firstname,
 				lastname3				= result[3].lastname,
 				dateofbirth3			= result[3].dateofbirth,
@@ -157,6 +163,7 @@ AddEventHandler("getCharacters", function(source, callback)
 
 			local data = {
 				identifier				= result[1].identifier,
+				irpid1					= result[1].irpid,
 				firstname1				= result[1].firstname,
 				lastname1				= result[1].lastname,
 				dateofbirth1			= result[1].dateofbirth,
@@ -171,6 +178,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level1 		= result[1].permission_level,
 				is_dead1 				= result[1].last_property,
 				position1				= result[1].position,
+				irpid2					= result[2].irpid,
 				firstname2				= result[2].firstname,
 				lastname2				= result[2].lastname,
 				dateofbirth2			= result[2].dateofbirth,
@@ -185,6 +193,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level2 		= result[2].permission_level,
 				is_dead2 				= result[2].last_property,
 				position2				= result[2].position,
+				irpid3					= '',
 				firstname3				= '',
 				lastname3				= '',
 				dateofbirth3			= '',
@@ -207,6 +216,7 @@ AddEventHandler("getCharacters", function(source, callback)
 
 			local data = {
 				identifier				= result[1].identifier,
+				irpid					= result[1].irpid,
 				firstname1				= result[1].firstname,
 				lastname1				= result[1].lastname,
 				dateofbirth1			= result[1].dateofbirth,
@@ -221,6 +231,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level1 		= result[1].permission_level,
 				is_dead1 				= result[1].last_property,
 				position1				= result[1].position,
+				irpid2					= '',
 				firstname2				= '',
 				lastname2				= '',
 				dateofbirth2			= '',
@@ -235,6 +246,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level2 		= '',
 				is_dead2 				= '',
 				position2				= '',
+				irpid3					= '',
 				firstname3				= '',
 				lastname3				= '',
 				dateofbirth3			= '',
@@ -256,6 +268,7 @@ AddEventHandler("getCharacters", function(source, callback)
 		else
 
 			local data = {
+				irpid1					= '',
 				firstname1				= '',
 				lastname1				= '',
 				dateofbirth1			= '',
@@ -270,6 +283,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level1 		= '',
 				is_dead1 				= '',
 				position1				= '',
+				irpid2					= '',
 				firstname2				= '',
 				lastname2				= '',
 				dateofbirth2			= '',
@@ -284,6 +298,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level2 		= '',
 				is_dead2 				= '',
 				position2				= '',
+				irpid3					= '',
 				firstname3				= '',
 				lastname3				= '',
 				dateofbirth3			= '',
@@ -306,8 +321,29 @@ end)
 
 RegisterServerEvent('setIdentity')
 AddEventHandler('setIdentity', function(identifier, data, callback)
-
-	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade)', {
+	local chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+	local length = 10
+	local irpid = ''
+	math.randomseed(os.time())
+	charTable = {}
+	for c in chars:gmatch"." do
+		table.insert(charTable, c)
+	end
+	for i = 1, length do
+		irpid = irpid .. charTable[math.random(1, #charTable)]
+	end
+		MySQL.Async.execute('UPDATE `user_inventory` SET `irpid` = @irpid, count = 0 WHERE identifier = @identifier', {   --- Sets inventory account to 0 when registering/creating new character
+	['@identifier'] = identifier,
+	['@irpid'] = irpid
+	})
+		MySQL.Async.execute('SELECT * FROM `user_inventory` WHERE identifier = @identifier AND irpid = @irpid', { --- Gets character unique irpid
+	['@identifier'] = identifier,
+	['@irpid'] = irpid
+	})
+		MySQL.Async.execute('INSERT INTO character_inventory (identifier, irpid, item, count) SELECT identifier, irpid, item, count FROM user_inventory WHERE irpid = @irpid', { --- Updates the character inventory
+		['@irpid'] = irpid
+	})
+	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade, irpid) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade, @irpid)', {
 		['@identifier']		= identifier,
 		['@firstname']		= data.firstname,
 		['@lastname']		= data.lastname,
@@ -317,12 +353,13 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 		['@bank']			= "0",
 		['@money']			= "0",
 		['@job']			= "unemployed",
-		['@job_grade']		= "0"
+		['@job_grade']		= "0",
+		['@irpid']			= irpid
 	}, function(rowsChanged)
 		if callback then
 			callback(true)
 		end
-	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `bank` = @bank, `money` = @money, `job` = @job, `job_grade` = @job_grade WHERE identifier = @identifier', {
+	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `bank` = @bank, `money` = @money, `job` = @job, `job_grade` = @job_grade, `irpid` = @irpid WHERE identifier = @identifier', {
 		['@identifier']		= identifier,
 		['@firstname']		= data.firstname,
 		['@lastname']		= data.lastname,
@@ -332,16 +369,18 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 		['@bank']			= "0",
 		['@money']			= "0",
 		['@job']			= "unemployed",
-		['@job_grade']		= "0"
+		['@job_grade']		= "0",
+		['@irpid']			= irpid
 	})
-	Citizen.Wait(1000)
 	end)
 end)
 
 RegisterServerEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(identifier, data, callback)
-	MySQL.Async.execute('UPDATE users SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier', {
+
+	MySQL.Async.execute('UPDATE users SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier', {
 		['@identifier']					= identifier,
+		['@irpid']						= data.irpid,
 		['@firstname']					= data.firstname,
 		['@lastname']					= data.lastname,
 		['@dateofbirth']				= data.dateofbirth,
@@ -368,8 +407,9 @@ RegisterServerEvent('saveIdentity')
 AddEventHandler('saveIdentity', function (identifier, data, callback)
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data) -- gets identifier from database 
-	MySQL.Async.execute('UPDATE `characters` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
+	MySQL.Async.execute('UPDATE `characters` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND irpid = @irpid', {
 		['@identifier']					= identifier,
+		['@irpid']						= data[1].irpid,
 		['@firstname']					= data[1].firstname,
 		['@lastname']					= data[1].lastname,
 		['@dateofbirth']				= data[1].dateofbirth,
@@ -395,10 +435,12 @@ RegisterServerEvent('saveIdentityBeforeChange')
 AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback)
 	local identifier = GetPlayerIdentifiers(source)[1] --grabs ingame identifier else will not find it
 	local xPlayer = ESX.GetPlayerFromId(source)
+	local source = xPlayer.source
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data)
-	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
+	MySQL.Async.execute('UPDATE `users` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND irpid = @irpid', {
 		['@identifier']					= identifier,
+		['@irpid']						= data[1].irpid,
 		['@firstname']					= data[1].firstname,
 		['@lastname']					= data[1].lastname,
 		['@dateofbirth']				= data[1].dateofbirth,
@@ -418,8 +460,9 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 			end
 		end)
 		Citizen.Wait(500)
-		MySQL.Async.execute('UPDATE `characters` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
+		MySQL.Async.execute('UPDATE `characters` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND irpid = @irpid', {
 		['@identifier']					= identifier,
+		['@irpid']						= data[1].irpid,
 		['@firstname']					= data[1].firstname,
 		['@lastname']					= data[1].lastname,
 		['@dateofbirth']				= data[1].dateofbirth,
@@ -437,17 +480,14 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 			if callback then
 				callback(true)
 		end
+		TriggerClientEvent('saveCharacterAttributes', source)
 	end)
 end)
 RegisterNetEvent('deleteCharacter')
 AddEventHandler('deleteCharacter', function (identifier, data, callback)
-	MySQL.Async.execute('DELETE FROM characters WHERE identifier = @identifier AND firstname = @firstname AND lastname = @lastname AND dateofbirth = @dateofbirth AND sex = @sex AND height = @height', {
+	MySQL.Async.execute('DELETE characters, character_inventory FROM characters INNER JOIN character_inventory ON characters.irpid = character_inventory.irpid WHERE characters.irpid = @irpid AND character_inventory.irpid = @irpid', {
 		['@identifier']					= identifier,
-		['@firstname']					= data.firstname,
-		['@lastname']					= data.lastname,
-		['@dateofbirth']				= data.dateofbirth,
-		['@sex']						= data.sex,
-		['@height']						= data.height
+		['@irpid']						= data.irpid
 	}, function(rowsChanged)
 				if callback then
 				callback(true)
@@ -507,8 +547,7 @@ end)
 
 RegisterServerEvent('setJob')
 AddEventHandler("setJob", function(setJob)
-print("Working on setting character informatin")
- local playerLoadout = {}
+local playerLoadout = {}
 
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local identifier = GetPlayerIdentifiers(source)[1]
@@ -549,12 +588,54 @@ print("Working on setting character informatin")
 						xPlayer.addWeapon(loadout[i].name, loadout[i].ammo)
 					end
 				end
-
 				end
 			end
 		end
 	end)
 end)
+
+--[[RegisterServerEvent('saveCharacter')
+AddEventHandler('saveCharacter', function(saveCharacter)
+local xPlayer = ESX.GetPlayerFromId(source)
+local identifier = GetPlayerIdentifiers(source)[1]
+	MySQL.Async.fetchAll('SELECT irpid FROM users WHERE identifier = @identifier', {
+	['@identifier'] = identifier
+	}, function(result)
+		print(result[1].irpid)
+		local irpid = result[1].irpid
+		for i=1, #xPlayer.inventory, 1 do
+			MySQL.Async.execute('UPDATE character_inventory SET count = @count WHERE identifier = @identifier AND item = @item AND irpid = @irpid', {
+				['@count']      = xPlayer.inventory[i].count,
+				['@identifier'] = xPlayer.identifier,
+				['@item']       = xPlayer.inventory[i].name,
+				['@irpid']		= irpid	
+			}, function(rowsChanged)
+			end)
+		end
+	end)
+end)
+RegisterServerEvent('saveUser')
+AddEventHandler('saveUser', function(saveCharacter)
+local xPlayer = ESX.GetPlayerFromId(source)
+local identifier = GetPlayerIdentifiers(source)[1]
+	MySQL.Async.fetchAll('SELECT irpid FROM users WHERE identifier = @identifier', {
+	['@identifier'] = identifier
+	}, function(result)
+		print(result[1].irpid)
+		local irpid = result[1].irpid
+		for i=1, #xPlayer.inventory, 1 do
+			MySQL.Async.execute('UPDATE character_inventory SET count = @count WHERE identifier = @identifier AND item = @item AND irpid = @irpid', {
+				['@count']      = xPlayer.inventory[i].count,
+				['@identifier'] = xPlayer.identifier,
+				['@item']       = xPlayer.inventory[i].name,
+				['@irpid']		= irpid	
+			}, function(rowsChanged)
+			end)
+		end
+	end)
+end)]]--
+
+
 
 RegisterServerEvent('loadoutupdate')
 AddEventHandler('loadoutupdate', function(loadout)
@@ -670,6 +751,7 @@ AddEventHandler('deleteCharacters', function(charid)
 	TriggerEvent('getCharacters', source, function(data)	
 		if charNumber == 1 and xPlayer ~= nil then
 			local data = {
+				irpid						= data.irpid1,
 				firstname					= data.firstname1,
 				lastname					= data.lastname1,
 				dateofbirth					= data.dateofbirth1,
@@ -701,6 +783,7 @@ AddEventHandler('deleteCharacters', function(charid)
 
 		elseif charNumber == 2 then
 			local data = {
+				irpid						= data.irpid2,
 				firstname					= data.firstname2,
 				lastname					= data.lastname2,
 				dateofbirth					= data.dateofbirth2,
@@ -732,6 +815,7 @@ AddEventHandler('deleteCharacters', function(charid)
 
 		elseif charNumber == 3 then
 			local data = {
+				irpid						= data.irpid3,
 				firstname					= data.firstname3,
 				lastname					= data.lastname3,
 				dateofbirth					= data.dateofbirth3,
@@ -772,6 +856,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 		if charNumber == 1 and xPlayer ~= nil then
 			local data = {
 				identifier					= data.identifier,
+				irpid						= data.irpid1,
 				firstname					= data.firstname1,
 				lastname					= data.lastname1,
 				dateofbirth					= data.dateofbirth1,
@@ -806,6 +891,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 
 			local data = {
 				identifier					= data.identifier,
+				irpid						= data.irpid2,
 				firstname					= data.firstname2,
 				lastname					= data.lastname2,
 				dateofbirth					= data.dateofbirth2,
@@ -841,6 +927,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 
 			local data = {
 				identifier					= data.identifier,
+				irpid						= data.irpid3,
 				firstname					= data.firstname3,
 				lastname					= data.lastname3,
 				dateofbirth					= data.dateofbirth3,
@@ -918,7 +1005,7 @@ end, {help = "List all your registered characters"})
 -------------------------TESTING ZONE---------------------------TESTING ZONE------------TESTING ZONE-----------TESTING ZONE---------------------TESTING ZONE--------TESTING ZONE------------------------------------------------------------------------------------------
 ------TESTING ZONE----------------TESTING ZONE--------------TESTING ZONE--------------TESTING ZONE--------------TESTING ZONE----TESTING ZONE-------------------TESTING ZONE-------------------------------TESTING ZONE
 ---TESTING ZONE--------TESTING ZONE--------TESTING ZONE-------TESTING ZONE-----------TESTING ZONE----TESTING ZONE---------------------TESTING ZONE--------TESTING ZONE------------------------------------------------------------
-RegisterServerEvent("getChar1")
+--[[RegisterServerEvent("getChar1")
 AddEventHandler("getChar1", function(source, char1)
 	local identifier = GetPlayerIdentifiers(source)[1]
 	MySQL.Async.fetchAll('SELECT * FROM `characters` WHERE `identifier` = @identifier', {
@@ -1007,4 +1094,125 @@ TriggerEvent('es:addCommand', 'getchars', function(source, args, user)
 		end
 	print (source)
 	end)
+end)]]--
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------                        UPDATES CHARACTER INVENTORY                       -------------------------------------
+-------------------------------------                        UPDATES CHARACTER FROM USER                       -------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+ESX.RegisterServerCallback("updateCharacterInventory", function(source, charInv)
+local xPlayer = ESX.GetPlayerFromId(source)
+local identifier = GetPlayerIdentifiers(source)[1]
+print("Updating character inventory")
+	MySQL.Async.fetchAll('SELECT irpid FROM users WHERE identifier = @identifier', {
+	['@identifier'] = identifier
+	}, function(result)
+		print(result[1].irpid)
+		local irpid = result[1].irpid
+		print(irpid)
+	MySQL.Async.execute('UPDATE character_inventory, user_inventory SET character_inventory.count = user_inventory.count WHERE user_inventory.irpid = @irpid AND character_inventory.item = user_inventory.item', {
+	['@irpid'] = irpid
+	})
+		end)
 end)
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------							 UPDATES USER INVENTORY                        -------------------------------------
+-------------------------------------                         UPDATES USER FROM CHARACTER DB                   -------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+ESX.RegisterServerCallback("updateUserInventory", function(source, userInv)
+local xPlayer = ESX.GetPlayerFromId(source)
+local identifier = GetPlayerIdentifiers(source)[1]
+	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+	['@irpid'] = irpid,
+	['@identifier'] = identifier
+	}, function(result)
+		print(result[1].irpid)
+		local irpid = result[1].irpid
+		print(irpid)
+	MySQL.Async.execute('UPDATE user_inventory, character_inventory SET user_inventory.irpid = character_inventory.irpid, user_inventory.count = character_inventory.count WHERE character_inventory.irpid = @irpid AND character_inventory.item = user_inventory.item', {
+	['@identifier'] = identifier,
+	['@irpid']	= irpid
+	})
+	end)
+	userInv("k")
+end)
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------                  UPDATES XPLAYER INVENTORY IN GAME REAL TIME             -------------------------------------
+-------------------                                                  FROM DATABASE												 ------------------- 
+-------------------------------------                   ALSO UPDATES INVENTORY IF NO VALUES FOUND              -------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+ESX.RegisterServerCallback("updateXplayerInventory", function(source, xInv)
+--TriggerEvent('es:addCommand', 'testing1', function(source, args, user)
+local xPlayer = ESX.GetPlayerFromId(source)
+local identifier = GetPlayerIdentifiers(source)[1]
+	playerInventory = json.encode(xPlayer.getInventory())
+	print(ESX.Items)
+	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+	['@irpid'] = irpid,
+	['@identifier'] = identifier
+		}, function(result)
+				print(result[1].irpid)
+				local irpid = result[1].irpid
+			MySQL.Async.fetchAll('SELECT item, count FROM user_inventory WHERE identifier = @identifier AND irpid = @irpid', {
+				['@identifier'] = identifier,
+				['@irpid'] = irpid
+			}, function(inventory) --Returnns items from database
+				for k,v in ipairs(inventory) do
+					local item = ESX.Items[v.item] -- Checks to make sure item is item
+					if item then
+						table.insert(xPlayer.inventory, { -- inserts the items into Xplayer inventory in propper format
+							name = v.item,
+							count = v.count,
+							label = item.label,
+							weight = item.weight,
+							usable = ESX.UsableItemsCallbacks[v.item] ~= nil,
+							rare = item.rare,
+							canRemove = item.canRemove
+						})					
+					end
+				end
+			for i=1, #xPlayer.inventory, 1 do --------sets Xplayer inventory
+				if xPlayer.inventory[i].count >= 0 then
+					xPlayer.setInventoryItem(xPlayer.inventory[i].name, xPlayer.inventory[i].count)
+				end
+			end
+		end)	
+	end)
+	xInv("ok")
+end)
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------                          UPDATES USER INVENTORY                          -------------------------------------
+-------------------                                                  FROM XPLAYER												 ------------------- 
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+ESX.RegisterServerCallback("saveXplayerInventory", function(source, saveX)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local identifier = GetPlayerIdentifiers(source)[1]
+	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+	['@identifier'] = identifier,
+	}, function(result)
+		print(result[1].irpid)
+		local irpid = result[1].irpid
+		for i=1, #xPlayer.inventory, 1 do
+			MySQL.Async.execute('UPDATE character_inventory SET count = @count WHERE identifier = @identifier AND item = @item AND irpid = @irpid', {
+				['@irpid']		= irpid,
+				['@count']      = xPlayer.inventory[i].count,
+				['@identifier'] = xPlayer.identifier,
+				['@item']       = xPlayer.inventory[i].name
+			}, function(rowsChanged)
+			end)
+		end
+		saveX("k")
+	end)
+end)
+

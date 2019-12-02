@@ -3,11 +3,8 @@
 ## Dependencies
 - [skinchanger](https://github.com/ESX-Org/skinchanger)
 - [esx_skin](https://github.com/ESX-Org/esx_skin)
-- [esx_ambulance](https://github.com/ESX-Org/esx_ambulancejob)
-- [esx_license](https://github.com/ESX-Org/esx_license)
 - [esx_status](https://github.com/ESX-Org/esx_status)
 - [esx_joblisting](https://github.com/ESX-Org/esx_joblisting)
-- [esx_property](https://github.com/ESX-Org/esx_property) 
 
 ## Support
 - [ImpulseRP Forums](https://impulserp.com/forumdisplay.php?fid=5)
@@ -20,6 +17,7 @@
 	setup. Refer to the .sql document for how your tables need to be setup. I will have a better guide in the future perhaps. 
 	It may be a good idea to just backup your current users, and delete that table and install this one. Works best when the 
 	users are emptied. Also make sure you have the latest updates from fiveM meaning version 16.8.6.
+	If you are having issues, it's probably database related. Refer to my forums for more information. 
 
 	* Add esx_irpidentity into your [esx] folder
 	* Import the importMe.sql file into your database
@@ -29,7 +27,7 @@
 	- You can check this out on my test server 
 	- 185.249.196.165:32126
 	- Here is a short video as well
-- [Demo](https://www.youtube.com/watch?v=Z1N2Uw0TLe8)
+- [Demo](https://www.youtube.com/watch?v=Z1N2Uw0TLe8)   --- NEED UPDATED
 
 ## What does this resource offer?
 	- Allows servers to support up to three identities/account
@@ -43,10 +41,8 @@
 	- Jobs/Skin/Loadout/Cash/Bank tied to character
 
 ## Current Commands
-	- /register		- Opens the registration/characters selection screen
 	- /charlist		- displays a list of all your characters
 	- /char			- displays your active character
-	- /switch 		- switch toons/register
 
 ## How it works
 	The concept is very simple and similar to Kashacters approach, however rather than manipulating steam identifiers
@@ -64,15 +60,15 @@
 
 # Goals/Future Updates
 ## Piorities
-	- Add delete character feature
-	- Make items/property/vehicles bound to character not account
+	- Add delete character feature (completed)
+	- Make items/property/vehicles bound to character not account (inventory completed)
 
 ## Goals/Future Updates
-	- Create specific area for character swapping 
-	- Add delete chracter feature
-	- Speed up transitioning time
-	- Add more checks to registration 
-	- Code cleanup and 
+	- Create specific area for character swapping  (completed)
+	- Add delete chracter feature (completed)
+	- Speed up transitioning time (completed)
+	- Add more checks to registration  
+	- Code cleanup 
 
 ## Other
 	- This code is a bit sloppy and this is my first big release. So please bear with me, I wanted to release this 

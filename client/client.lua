@@ -75,20 +75,33 @@ end)
 RegisterNetEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(source, skin)	
 	Citizen.Wait(1000)
-	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
+	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin) -- set player skin
 		TriggerEvent('skinchanger:loadSkin', skin)
 	--	TriggerServerEvent('loadoutupdate', loadout)
-		TriggerServerEvent('setJob', setJob)
+		TriggerServerEvent('setJob', setJob)							--set player job
+		ESX.TriggerServerCallback('updateUserInventory', function(userInv)				--updates user inventory from character inventory
+			if userInv == "k" then 
+				ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)
+				end)
+			end
+		end)
 	end)
 end)
-RegisterNetEvent('saveCharacter')
-AddEventHandler('saveCharacter', function(saveCharacter)	
-	TriggerServerEvent('saveCharacter', saveCharacter)
+RegisterNetEvent('saveCharacterAttributes')
+AddEventHandler('saveCharacterAttributes', function(saveCharacter)
+	ESX.TriggerServerCallback('saveXplayerInventory', function(saveX) -- gets inventory from player and saves to character inventory
+	print(saveX)
+--		if saveX == "k" then											-- returns k when complete
+--		TriggerServerEvent('updateCharacterInventory', characterInv)	-- then updates count to characters inventory
+--		end
+ -- TriggerServerEvent('saveCharacter', saveCharacter)
+	end)
 end)
 RegisterNetEvent('GetPlayerInformation')
 AddEventHandler('GetPlayerInformation', function(identifier)
 	TriggerServerEvent('removeLoadout', xPlayer, loadout)
 	TriggerServerEvent('setJob', setJob)
+	TriggerServerEvent('updateXplayerInventory', xInv)
 end)
 
 RegisterNetEvent('esx_irpidentity:setCharacterInformation')
@@ -129,7 +142,6 @@ RegisterNUICallback("CharacterChosen", function(data, cb)
     while not IsScreenFadedOut() do
         Citizen.Wait(10)
     end
-    cb("ok")
 end)
 
 RegisterNUICallback("DeleteCharacter", function(data, cb)
