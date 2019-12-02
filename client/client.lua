@@ -82,6 +82,9 @@ AddEventHandler('updateIdentity', function(source, skin)
 		ESX.TriggerServerCallback('updateUserInventory', function(userInv)				--updates user inventory from character inventory
 			if userInv == "k" then 
 				ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)
+				if xInv ~= nil then 
+				print ("seems to be working")
+				end
 				end)
 			end
 		end)
@@ -101,7 +104,8 @@ RegisterNetEvent('GetPlayerInformation')
 AddEventHandler('GetPlayerInformation', function(identifier)
 	TriggerServerEvent('removeLoadout', xPlayer, loadout)
 	TriggerServerEvent('setJob', setJob)
-	TriggerServerEvent('updateXplayerInventory', xInv)
+		ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)
+	end)
 end)
 
 RegisterNetEvent('esx_irpidentity:setCharacterInformation')
@@ -207,6 +211,7 @@ ESX.TriggerServerCallback('esx_irpidentity:characterCheck', function(check)
 			EnableGui(false)
 			Citizen.Wait(2000)
 			TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
+			Citizen.Wait(1000)
 			TriggerEvent('GetPlayerInformation')
 		else
 			ESX.ShowNotification(reason)
