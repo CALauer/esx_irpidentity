@@ -318,7 +318,7 @@ AddEventHandler("getCharacters", function(source, callback)
 		end
 	end)
 end)
-
+-- Sets initial identity upon entering the server
 RegisterServerEvent('setIdentity')
 AddEventHandler('setIdentity', function(identifier, data, callback)
 	local chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -402,8 +402,8 @@ AddEventHandler('updateIdentity', function(identifier, data, callback)
 	TriggerClientEvent('updateIdentity', -1, skin)
 	Citizen.Wait(200)
 end)
-
-RegisterServerEvent('saveIdentity')
+-- saves
+RegisterServerEvent('saveIdentity') -- saves one last time before charact swap //is necessary
 AddEventHandler('saveIdentity', function (identifier, data, callback)
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data) -- gets identifier from database 
@@ -430,8 +430,8 @@ AddEventHandler('saveIdentity', function (identifier, data, callback)
 		Citizen.Wait(1000)
 	end)
 end)
-	-- Save most recent loadout/money/ect to both characters and user tables
-RegisterServerEvent('saveIdentityBeforeChange')
+	-- Save most recent loadout/money/ect to both characters and user tables //is necessary
+RegisterServerEvent('saveIdentityBeforeChange')  
 AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback)
 	local identifier = GetPlayerIdentifiers(source)[1] --grabs ingame identifier else will not find it
 	local xPlayer = ESX.GetPlayerFromId(source)
@@ -523,70 +523,6 @@ AddEventHandler('esx_irpidentity:getClientInfo', function(identifier)
 		end
 	end)
 end)
-
-RegisterServerEvent('removeLoadout')
-AddEventHandler('removeLoadout', function(xPlayer, loadout)
-	local loadout1 = {}
-	local xPlayer = ESX.GetPlayerFromId(source)
-	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT * FROM `users` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier,
-	}, function(result)
-		if result[1].firstname ~= nil then
-			local data = {
-				identifier			= result[1].identifier,
-			}
-			local loadout = json.decode(result[1].loadout)
-				for i=1, #xPlayer.loadout, 1 do
-				xPlayer.removeWeapon(xPlayer.loadout[i].name)
-				end
-			end
-			print("loadout is being removed")
-	end)
-end)
-
---[[RegisterServerEvent('saveCharacter')
-AddEventHandler('saveCharacter', function(saveCharacter)
-local xPlayer = ESX.GetPlayerFromId(source)
-local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT irpid FROM users WHERE identifier = @identifier', {
-	['@identifier'] = identifier
-	}, function(result)
-		print(result[1].irpid)
-		local irpid = result[1].irpid
-		for i=1, #xPlayer.inventory, 1 do
-			MySQL.Async.execute('UPDATE character_inventory SET count = @count WHERE identifier = @identifier AND item = @item AND irpid = @irpid', {
-				['@count']      = xPlayer.inventory[i].count,
-				['@identifier'] = xPlayer.identifier,
-				['@item']       = xPlayer.inventory[i].name,
-				['@irpid']		= irpid	
-			}, function(rowsChanged)
-			end)
-		end
-	end)
-end)
-RegisterServerEvent('saveUser')
-AddEventHandler('saveUser', function(saveCharacter)
-local xPlayer = ESX.GetPlayerFromId(source)
-local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT irpid FROM users WHERE identifier = @identifier', {
-	['@identifier'] = identifier
-	}, function(result)
-		print(result[1].irpid)
-		local irpid = result[1].irpid
-		for i=1, #xPlayer.inventory, 1 do
-			MySQL.Async.execute('UPDATE character_inventory SET count = @count WHERE identifier = @identifier AND item = @item AND irpid = @irpid', {
-				['@count']      = xPlayer.inventory[i].count,
-				['@identifier'] = xPlayer.identifier,
-				['@item']       = xPlayer.inventory[i].name,
-				['@irpid']		= irpid	
-			}, function(rowsChanged)
-			end)
-		end
-	end)
-end)]]--
-
-
 
 RegisterServerEvent('loadoutupdate')
 AddEventHandler('loadoutupdate', function(loadout)
@@ -702,22 +638,7 @@ AddEventHandler('deleteCharacters', function(charid)
 	TriggerEvent('getCharacters', source, function(data)	
 		if charNumber == 1 and xPlayer ~= nil then
 			local data = {
-				irpid						= data.irpid1,
-				firstname					= data.firstname1,
-				lastname					= data.lastname1,
-				dateofbirth					= data.dateofbirth1,
-				sex							= data.sex1,
-				height						= data.height1,
-				skin						= data.skin1,
-				money						= data.money1,
-				job							= data.job1,
-				job_grade					= data.job_grade1,
-				loadout						= data.loadout1,
-				bank						= data.bank1,
-				permission_level			= data.permission_level1,
-				is_dead						= data.is_dead1,
-				position					= data.position1
-
+				irpid						= data.irpid1
 			}
 			if data.firstname ~= '' then				
 				TriggerEvent('deleteCharacter', GetPlayerIdentifiers(source)[1], data, function(callback)
@@ -734,21 +655,7 @@ AddEventHandler('deleteCharacters', function(charid)
 
 		elseif charNumber == 2 then
 			local data = {
-				irpid						= data.irpid2,
-				firstname					= data.firstname2,
-				lastname					= data.lastname2,
-				dateofbirth					= data.dateofbirth2,
-				sex							= data.sex2,
-				height						= data.height2,
-				skin						= data.skin2,
-				money						= data.money2,
-				job							= data.job2,
-				job_grade					= data.job_grade2,
-				loadout						= data.loadout2,
-				bank						= data.bank2,
-				permission_level			= data.permission_level2,
-				is_dead						= data.is_dead2,
-				position					= data.position2
+				irpid						= data.irpid2
 			}
 
 			if data.firstname ~= '' then				
@@ -766,21 +673,7 @@ AddEventHandler('deleteCharacters', function(charid)
 
 		elseif charNumber == 3 then
 			local data = {
-				irpid						= data.irpid3,
-				firstname					= data.firstname3,
-				lastname					= data.lastname3,
-				dateofbirth					= data.dateofbirth3,
-				sex							= data.sex3,
-				height						= data.height3,
-				skin						= data.skin3,
-				money						= data.money3,
-				job							= data.job3,
-				job_grade					= data.job_grade3,
-				loadout						= data.loadout3,
-				bank						= data.bank3,
-				permission_level			= data.permission_level3,
-				is_dead						= data.is_dead3,
-				position					= data.position3
+				irpid						= data.irpid3
 			}
 			if data.firstname ~= '' then				
 				TriggerEvent('deleteCharacter', GetPlayerIdentifiers(source)[1], data, function(callback)
@@ -797,6 +690,7 @@ AddEventHandler('deleteCharacters', function(charid)
 		end
 	end)
 end)
+
 RegisterServerEvent("esx_irpidentity:CharacterChosen")
 AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 	local source = source
@@ -911,148 +805,13 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 		end
 	end)
 end)
---------------------------------------------------------------------------------------------Old Regster Command-----------------------------------------------------------------------------------------------
---[[TriggerEvent('es:addCommand', 'register', function(source, args, user)
-	TriggerEvent('getCharacters', source, function(data)
-		if data.firstname3 ~= '' then
-			TriggerClientEvent('chat:addMessage', source, { args = { '^[ImpulseRP]', 'You can only have 3 registered characters. Use the ^3/chardel^0  command in order to delete existing characters.' } })
-		else
-			TriggerClientEvent('esx_irpidentity:showRegisterIdentity', source, {})
-		end
-	end)
-end)]]-- UNCOMMENT OUT TO ENABLE ABILITY TO REGISTER ANYWHERE AS WELL AS CHARACTER SWAP
 
-TriggerEvent('es:addGroupCommand', 'char', 'user', function(source, args, user)
-	getIdentity(source, function(data)
-		if data.firstname == '' then
-			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You do not have an active character!' } })
-		else
-			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Active character: ^2' .. data.firstname .. ' ' .. data.lastname } })
-		end
-	end)
-end, function(source, args, user)
-	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
-end, {help = "List your current character"})
-
-TriggerEvent('es:addGroupCommand', 'charlist', 'user', function(source, args, user)
-	TriggerEvent('getCharacters', source, function(data)
-		if data.firstname1 ~= '' then
-			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 1:', data.firstname1 .. ' ' .. data.lastname1 } })
-			
-			if data.firstname2 ~= '' then
-				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 2:', data.firstname2 .. ' ' .. data.lastname2 } })
-				
-				if data.firstname3 ~= '' then
-					TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 3:', data.firstname3 .. ' ' .. data.lastname3 } })
-				end
-			end
-		else
-			TriggerClientEvent('chat:addMessage', source, { args = { '^[ImpulseRP]', 'You have no registered characters. yiu need to go to the medical center and register.' } })
-		end
-	end)
-end, function(source, args, user)
-	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
-end, {help = "List all your registered characters"})
--------------------------TESTING ZONE---------------------------TESTING ZONE------------TESTING ZONE-----------TESTING ZONE---------------------TESTING ZONE--------TESTING ZONE------------------------------------------------------------------------------------------
-------TESTING ZONE----------------TESTING ZONE--------------TESTING ZONE--------------TESTING ZONE--------------TESTING ZONE----TESTING ZONE-------------------TESTING ZONE-------------------------------TESTING ZONE
----TESTING ZONE--------TESTING ZONE--------TESTING ZONE-------TESTING ZONE-----------TESTING ZONE----TESTING ZONE---------------------TESTING ZONE--------TESTING ZONE------------------------------------------------------------
---[[RegisterServerEvent("getChar1")
-AddEventHandler("getChar1", function(source, char1)
-	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT * FROM `characters` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier
-	}, function(result)
-		if result[1]  then
-		local data = {
-			firstname				= result[1].firstname,
-			lastname				= result[1].lastname,
-			dateofbirth				= result[1].dateofbirth,
-			sex						= result[1].sex,
-			height					= result[1].height,
-			skin					= result[1].skin,
-			money					= result[1].money,
-			job						= result[1].job,
-			job_grade	 			= result[1].job_grade,
-			loadout					= result[1].loadout,
-			bank 					= result[1].bank,
-			permission_level 		= result[1].permission_level,
-			is_dead					= result[1].last_property,
-			position				= result[1].position
-			}
-			char1(data)
-		end
-	end)
-end)
-RegisterServerEvent("getChar2")
-AddEventHandler("getChar2", function(source, char2)
-	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT * FROM `characters` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier
-	}, function(result)
-		if result[2] then
-		local data = {
-			firstname				= result[2].firstname,
-			lastname				= result[2].lastname,
-			dateofbirth				= result[2].dateofbirth,
-			sex						= result[2].sex,
-			height					= result[2].height,
-			skin					= result[2].skin,
-			money					= result[2].money,
-			job						= result[2].job,
-			job_grade	 			= result[2].job_grade,
-			loadout 				= result[2].loadout,
-			bank					= result[2].bank,
-			permission_level 		= result[2].permission_level,
-			is_dead 				= result[2].last_property,
-			position				= result[2].position
-			}
-			char2(data)
-		end
-	end)
-end)
-RegisterServerEvent("getChar3")
-AddEventHandler("getChar3", function(source, char3)
-	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT * FROM `characters` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier
-	}, function(result)
-		if result[3] then
-		local data = {
-			firstname				= result[3].firstname,
-			lastname				= result[3].lastname,
-			dateofbirth				= result[3].dateofbirth,
-			sex						= result[3].sex,
-			height					= result[3].height,
-			skin					= result[3].skin,
-			money 					= result[3].money,
-			job 					= result[3].job,
-			job_grade	 			= result[3].job_grade,
-			loadout 				= result[3].loadout,
-			bank 					= result[3].bank,
-			permission_level 		= result[3].permission_level,
-			is_dead 				= result[3].last_property,
-			position				= result[3].position
-		}
-		char3(data)
-		end
-	end)
-end)
-TriggerEvent('es:addCommand', 'getchars', function(source, args, user)	
-	TriggerEvent('getCharacters', source, function(data)
-	print("testing")
-		for k, v in pairs(data) do
-		print(k,v)
-		end
-	print (source)
-	end)
-end)]]--
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------                        UPDATES CHARACTER INVENTORY                       -------------------------------------
 -------------------------------------                        UPDATES CHARACTER FROM USER                       -------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-
 ESX.RegisterServerCallback("updateCharacterInventory", function(source, charInv)
 local xPlayer = ESX.GetPlayerFromId(source)
 local identifier = GetPlayerIdentifiers(source)[1]
@@ -1074,7 +833,6 @@ end)
 -------------------------------------                         UPDATES USER FROM CHARACTER DB                   -------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-
 ESX.RegisterServerCallback("updateUserInventory", function(source, userInv)
 local xPlayer = ESX.GetPlayerFromId(source)
 local identifier = GetPlayerIdentifiers(source)[1]
@@ -1138,8 +896,6 @@ local identifier = GetPlayerIdentifiers(source)[1]
 	end)
 	xInv("ok")
 end)
-
-
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------                          UPDATES USER INVENTORY                          -------------------------------------
@@ -1166,4 +922,40 @@ ESX.RegisterServerCallback("saveXplayerInventory", function(source, saveX)
 		saveX("k")
 	end)
 end)
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------                               INPUT COMMANDS                             -------------------------------------
+-------------------                                                   															 ------------------- 
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+TriggerEvent('es:addGroupCommand', 'char', 'user', function(source, args, user)
+	getIdentity(source, function(data)
+		if data.firstname == '' then
+			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You do not have an active character!' } })
+		else
+			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Active character: ^2' .. data.firstname .. ' ' .. data.lastname } })
+		end
+	end)
+end, function(source, args, user)
+	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
+end, {help = "List your current character"})
 
+TriggerEvent('es:addGroupCommand', 'charlist', 'user', function(source, args, user)
+	TriggerEvent('getCharacters', source, function(data)
+		if data.firstname1 ~= '' then
+			TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 1:', data.firstname1 .. ' ' .. data.lastname1 } })
+			
+			if data.firstname2 ~= '' then
+				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 2:', data.firstname2 .. ' ' .. data.lastname2 } })
+				
+				if data.firstname3 ~= '' then
+					TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP] Character 3:', data.firstname3 .. ' ' .. data.lastname3 } })
+				end
+			end
+		else
+			TriggerClientEvent('chat:addMessage', source, { args = { '^[ImpulseRP]', 'You have no registered characters. yiu need to go to the medical center and register.' } })
+		end
+	end)
+end, function(source, args, user)
+	TriggerClientEvent('chat:addMessage', source, { args = { '^3SYSTEM', 'Insufficient permissions!' } })
+end, {help = "List all your registered characters"})

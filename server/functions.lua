@@ -39,7 +39,7 @@ print("Setting Bank")
 			}
 			local bank				= tonumber(result[1].bank)
 			if xPlayer then
-			xPlayer.setMoney(bank)
+			xPlayer.setBankBalance(bank)
 			end
 		end
 	end)

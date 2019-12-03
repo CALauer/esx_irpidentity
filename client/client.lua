@@ -82,23 +82,26 @@ Citizen.CreateThread(function()
 			DisableControlAction(0, 309, true)
 			DisableControlAction(0, 246, true) -- disable y key
 			DisableControlAction(0, 303, true) -- disable u key
+			DisableControlAction(0, 37, true)  -- disable tab key
+			DisableControlAction(0, 199, true)  -- disable p key
+			DisableControlAction(0, 205, true)  -- disable e key
+			DisableControlAction(0, 206, true)  -- disable q key
 		end
 	end
 end)
-
+-- Updates character information
 RegisterNetEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(source, skin)	
 	Citizen.Wait(1000)
-	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin) -- set player skin
-		TriggerEvent('skinchanger:loadSkin', skin)
-	--	TriggerServerEvent('loadoutupdate', loadout)
-		TriggerServerEvent('setJob', setJob)							--set player job
-		TriggerServerEvent('setMoney', setMoney)
-		TriggerServerEvent('setBank', setBank)
-		TriggerServerEvent('setLoadout', setLoadout)
-		ESX.TriggerServerCallback('updateUserInventory', function(userInv)				--updates user inventory from character inventory
-			if userInv == "k" then 
-				ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)
+	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin) 					 -- Set player skin
+		TriggerEvent('skinchanger:loadSkin', skin)								
+		TriggerServerEvent('setJob', setJob)											 -- Set player job
+		TriggerServerEvent('setMoney', setMoney)                     		 		     -- Set cash
+		TriggerServerEvent('setBank', setBank)											 -- Set bank account
+		TriggerServerEvent('setLoadout', setLoadout)									 -- Set loadout							
+	    ESX.TriggerServerCallback('updateUserInventory', function(userInv)				 -- Updates user inventory database to new toon
+			if userInv == "k" then 														
+				ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)		 -- Updates in game character inventory
 				end)
 			end
 		end)
@@ -107,27 +110,23 @@ end)
 RegisterNetEvent('saveCharacterAttributes')
 AddEventHandler('saveCharacterAttributes', function(saveCharacter)
 	ESX.TriggerServerCallback('saveXplayerInventory', function(saveX) -- gets inventory from player and saves to character inventory
-	print(saveX)
---		if saveX == "k" then											-- returns k when complete
---		TriggerServerEvent('updateCharacterInventory', characterInv)	-- then updates count to characters inventory
---		end
- -- TriggerServerEvent('saveCharacter', saveCharacter)
 	end)
 end)
-RegisterNetEvent('GetPlayerInformation')
-AddEventHandler('GetPlayerInformation', function(identifier)
-	TriggerServerEvent('setJob', setJob)							--set player job
-	TriggerServerEvent('setMoney', setMoney)
-	TriggerServerEvent('setBank', setBank)
-	TriggerServerEvent('setLoadoutNone', setLoadoutNone)
-	ESX.TriggerServerCallback("updateXplayerInventory", function(xInv)
+-- Registers New Character
+RegisterNetEvent('registerCharacter')
+AddEventHandler('registerCharacter', function(identifier)
+	TriggerServerEvent('setJob', setJob)											 -- Set player job
+	TriggerServerEvent('setMoney', setMoney)                     		 		     -- Set cash
+	TriggerServerEvent('setBank', setBank)											 -- Set bank account
+	TriggerServerEvent('setLoadoutNone', setLoadoutNone)							 -- Set new character loadout	
+	ESX.TriggerServerCallback("updateXplayerInventory", function(xInv)				 -- Updates the in game character inventory
 	end)
 end)
 
-RegisterNetEvent('esx_irpidentity:setCharacterInformation')
+-- Sets information for display on HUD
+RegisterNetEvent('esx_irpidentity:setCharacterInformation')  
 AddEventHandler('esx_irpidentity:setCharacterInformation', function(firstname1, lastname1, job1, money1, bank1  ,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)	
 xPlayer = ESX.GetPlayerData(source)
---print(xPlayer)
 if xPlayer ~= nil then
 	SendNUIMessage({
 		firstname1 = firstname1,
@@ -227,7 +226,7 @@ ESX.TriggerServerCallback('esx_irpidentity:characterCheck', function(check)
 			EnableGui(false)
 			Citizen.Wait(2000)
 			TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
-			TriggerEvent('GetPlayerInformation')
+			TriggerEvent('registerCharacter')
 		else
 			ESX.ShowNotification(reason)
 		end
