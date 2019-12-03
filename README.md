@@ -4,10 +4,8 @@
 - [skinchanger](https://github.com/ESX-Org/skinchanger)
 - [esx_skin](https://github.com/ESX-Org/esx_skin)
 - [esx_ambulance](https://github.com/ESX-Org/esx_ambulancejob)
-- [esx_license](https://github.com/ESX-Org/esx_license)
 - [esx_status](https://github.com/ESX-Org/esx_status)
 - [esx_joblisting](https://github.com/ESX-Org/esx_joblisting)
-- [esx_property](https://github.com/ESX-Org/esx_property) 
 
 ## Support
 - [ImpulseRP Forums](https://impulserp.com/forumdisplay.php?fid=5)
