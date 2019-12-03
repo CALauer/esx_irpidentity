@@ -3,7 +3,20 @@ local myIdentity = {}
 local myIdentifiers = {}
 local hasIdentity = false
 local isDead = false
-
+local spawning = false
+local store = ""
+local blipSpawn = nil
+local Keys = {
+	["ESC"] = 322, ["F1"] = 288, ["F2"] = 289, ["F3"] = 170, ["F5"] = 166, ["F6"] = 167, ["F7"] = 168, ["F8"] = 169, ["F9"] = 56, ["F10"] = 57,
+	["~"] = 243, ["1"] = 157, ["2"] = 158, ["3"] = 160, ["4"] = 164, ["5"] = 165, ["6"] = 159, ["7"] = 161, ["8"] = 162, ["9"] = 163, ["-"] = 84, ["="] = 83, ["BACKSPACE"] = 177,
+	["TAB"] = 37, ["Q"] = 44, ["W"] = 32, ["E"] = 38, ["R"] = 45, ["T"] = 245, ["Y"] = 246, ["U"] = 303, ["P"] = 199, ["["] = 39, ["]"] = 40, ["ENTER"] = 18,
+	["CAPS"] = 137, ["A"] = 34, ["S"] = 8, ["D"] = 9, ["F"] = 23, ["G"] = 47, ["H"] = 74, ["K"] = 311, ["L"] = 182,
+	["LEFTSHIFT"] = 21, ["Z"] = 20, ["X"] = 73, ["C"] = 26, ["V"] = 0, ["B"] = 29, ["N"] = 249, ["M"] = 244, [","] = 82, ["."] = 81,
+	["LEFTCTRL"] = 36, ["LEFTALT"] = 19, ["SPACE"] = 22, ["RIGHTCTRL"] = 70,
+	["HOME"] = 213, ["PAGEUP"] = 10, ["PAGEDOWN"] = 11, ["DELETE"] = 178,
+	["LEFT"] = 174, ["RIGHT"] = 175, ["TOP"] = 27, ["DOWN"] = 173,
+	["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
+}
 ESX = nil
 
 Citizen.CreateThread(function()
@@ -71,14 +84,26 @@ Citizen.CreateThread(function()
 		end
 	end
 end)
+RegisterNetEvent('registerPlayer')
+AddEventHandler('registerPlayer', function(identifier)
+	TriggerServerEvent('removeLoadout', xPlayer, loadout)
+	TriggerServerEvent('setJob', setJob)
+	TriggerServerEvent('setMoney', setMoney)
+	TriggerServerEvent('setBank', setBank)
+	TriggerServerEvent('setLoadoutNone', setLoadoutNone)
+		ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)
+	end)
+end)
 
 RegisterNetEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(source, skin)	
 	Citizen.Wait(1000)
 	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin) -- set player skin
 		TriggerEvent('skinchanger:loadSkin', skin)
-	--	TriggerServerEvent('loadoutupdate', loadout)
-		TriggerServerEvent('setJob', setJob)							--set player job
+		TriggerServerEvent('setJob', setJob)
+		TriggerServerEvent('setMoney', setMoney)
+		TriggerServerEvent('setBank', setBank)
+		TriggerServerEvent('setLoadout', setLoadout)						--set player job
 		ESX.TriggerServerCallback('updateUserInventory', function(userInv)				--updates user inventory from character inventory
 			if userInv == "k" then 
 				ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)
@@ -94,24 +119,13 @@ RegisterNetEvent('saveCharacterAttributes')
 AddEventHandler('saveCharacterAttributes', function(saveCharacter)
 	ESX.TriggerServerCallback('saveXplayerInventory', function(saveX) -- gets inventory from player and saves to character inventory
 	print(saveX)
---		if saveX == "k" then											-- returns k when complete
---		TriggerServerEvent('updateCharacterInventory', characterInv)	-- then updates count to characters inventory
---		end
- -- TriggerServerEvent('saveCharacter', saveCharacter)
 	end)
 end)
-RegisterNetEvent('GetPlayerInformation')
-AddEventHandler('GetPlayerInformation', function(identifier)
-	TriggerServerEvent('removeLoadout', xPlayer, loadout)
-	TriggerServerEvent('setJob', setJob)
-		ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)
-	end)
-end)
+
 
 RegisterNetEvent('esx_irpidentity:setCharacterInformation')
 AddEventHandler('esx_irpidentity:setCharacterInformation', function(firstname1, lastname1, job1, money1, bank1  ,firstname2, lastname2, job2, money2, bank2,firstname3, lastname3, job3, money3, bank3)	
 xPlayer = ESX.GetPlayerData(source)
---print(xPlayer)
 if xPlayer ~= nil then
 	SendNUIMessage({
 		firstname1 = firstname1,
@@ -136,9 +150,9 @@ end)
 
 RegisterNetEvent('esx_irpidentity:showCharacterSelection')
 	AddEventHandler('esx_irpidentity:showCharacterSelection', function()
-		if not isDead then
-			EnableGui(true)
-		end
+	if not isDead then
+		EnableGui(true)
+	end
 end)
 
 RegisterNUICallback("CharacterChosen", function(data, cb)
@@ -212,7 +226,7 @@ ESX.TriggerServerCallback('esx_irpidentity:characterCheck', function(check)
 			Citizen.Wait(2000)
 			TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
 			Citizen.Wait(1000)
-			TriggerEvent('GetPlayerInformation')
+			TriggerEvent('registerPlayer')
 		else
 			ESX.ShowNotification(reason)
 		end
@@ -257,22 +271,7 @@ function verifyName(name)
 	return ''
 end
 
-local spawning = false
-local store = ""
-local blipSpawn = nil
-ESX = nil
 
-local Keys = {
-	["ESC"] = 322, ["F1"] = 288, ["F2"] = 289, ["F3"] = 170, ["F5"] = 166, ["F6"] = 167, ["F7"] = 168, ["F8"] = 169, ["F9"] = 56, ["F10"] = 57,
-	["~"] = 243, ["1"] = 157, ["2"] = 158, ["3"] = 160, ["4"] = 164, ["5"] = 165, ["6"] = 159, ["7"] = 161, ["8"] = 162, ["9"] = 163, ["-"] = 84, ["="] = 83, ["BACKSPACE"] = 177,
-	["TAB"] = 37, ["Q"] = 44, ["W"] = 32, ["E"] = 38, ["R"] = 45, ["T"] = 245, ["Y"] = 246, ["U"] = 303, ["P"] = 199, ["["] = 39, ["]"] = 40, ["ENTER"] = 18,
-	["CAPS"] = 137, ["A"] = 34, ["S"] = 8, ["D"] = 9, ["F"] = 23, ["G"] = 47, ["H"] = 74, ["K"] = 311, ["L"] = 182,
-	["LEFTSHIFT"] = 21, ["Z"] = 20, ["X"] = 73, ["C"] = 26, ["V"] = 0, ["B"] = 29, ["N"] = 249, ["M"] = 244, [","] = 82, ["."] = 81,
-	["LEFTCTRL"] = 36, ["LEFTALT"] = 19, ["SPACE"] = 22, ["RIGHTCTRL"] = 70,
-	["HOME"] = 213, ["PAGEUP"] = 10, ["PAGEDOWN"] = 11, ["DELETE"] = 178,
-	["LEFT"] = 174, ["RIGHT"] = 175, ["TOP"] = 27, ["DOWN"] = 173,
-	["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
-}
 
 
 
