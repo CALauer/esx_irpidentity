@@ -52,7 +52,19 @@
 	The concept is very simple and similar to Kashacters approach, however rather than manipulating steam identifiers
 	and concatenating 1500 things, it simply saves all your information on your active toon, and when you switch toons,
 	or register a new toon it updates your character at that point and time and then retrieve the character of your
-	choosing. 
+	choosing and then just swaps information. 
+
+	If you are generally interested in how it works, I will try to add something on my forums that is a bit more 
+	specific.
+
+## v1.0.52
+	Versions 1.0.5 on now introduce what I am calling IrpID. This is a unique identifier assigned to each of your 
+	characters. This allows for them to each ahve their own inventories. Adapting this to other resources will be
+	much easier then that of any other character system that is currently released(as far as I know), with that 
+	you should only need to add irpid with the identifier/as the identifier with other resource. You will have to
+	have a basic understanding of how identifiers work to have it working with more complex resources like some
+	garages, disc inventory(intend on adding support for this) and ect. For developers who know people are using 
+	this resource, will easily be able to develop around it using the IrpID system. 
 
 ## Known Issues as of 11/21/2019
 	- All vehicles , itmes, and property are account bound. Meaning All your toons will share the same vehicles, items, 
@@ -71,8 +83,8 @@
 	- Create specific area for character swapping  (Complete)
 	- Add delete chracter feature				   (Complete)
 	- Speed up transitioning time				   (Complete)
-	- Add more checks to registration         
-	- Code cleanup
+	- Add more checks to registration         		
+	- Code cleanup								   (OnGoing)				
 
 ## Other
 	- This code is a bit sloppy and this is my first big release. So please bear with me, I wanted to release this 

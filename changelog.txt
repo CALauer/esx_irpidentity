@@ -21,3 +21,4 @@
 //******MINER UPDATE******\\
 	*Fixed an issue with loadout at registration not going away
 	*Added smaller queries to reduce resource management
+
