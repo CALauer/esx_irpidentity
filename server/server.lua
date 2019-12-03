@@ -1179,7 +1179,7 @@ local identifier = GetPlayerIdentifiers(source)[1]
 					end
 				end
 			for i=1, #xPlayer.inventory, 1 do --------sets Xplayer inventory
-				if xPlayer.inventory ~= nil then
+				if xPlayer.inventory[i].count >= 0 then
 					xPlayer.setInventoryItem(xPlayer.inventory[i].name, xPlayer.inventory[i].count)
 				end
 			end
