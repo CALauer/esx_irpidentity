@@ -11,8 +11,6 @@ Spawn = {
 	["medical_center"] = {
 		position = { x = 339.19, y = -1394.63, z = 32.51 },
 		reward = math.random(5000, 35000),
-		nameOfLocation = "Medical Center",
-		secondsRemaining = 350, -- seconds
-		lastRobbed = 0
+		nameOfLocation = "Medical Center"
 	},
 }

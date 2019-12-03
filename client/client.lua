@@ -93,6 +93,9 @@ AddEventHandler('updateIdentity', function(source, skin)
 		TriggerEvent('skinchanger:loadSkin', skin)
 	--	TriggerServerEvent('loadoutupdate', loadout)
 		TriggerServerEvent('setJob', setJob)							--set player job
+		TriggerServerEvent('setMoney', setMoney)
+		TriggerServerEvent('setBank', setBank)
+		TriggerServerEvent('setLoadout', setLoadout)
 		ESX.TriggerServerCallback('updateUserInventory', function(userInv)				--updates user inventory from character inventory
 			if userInv == "k" then 
 				ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)
@@ -113,9 +116,12 @@ AddEventHandler('saveCharacterAttributes', function(saveCharacter)
 end)
 RegisterNetEvent('GetPlayerInformation')
 AddEventHandler('GetPlayerInformation', function(identifier)
-	TriggerServerEvent('removeLoadout', xPlayer, loadout)
-	TriggerServerEvent('setJob', setJob)
-	TriggerServerEvent('updateXplayerInventory', xInv)
+	TriggerServerEvent('setJob', setJob)							--set player job
+	TriggerServerEvent('setMoney', setMoney)
+	TriggerServerEvent('setBank', setBank)
+	TriggerServerEvent('setLoadoutNone', setLoadoutNone)
+	ESX.TriggerServerCallback("updateXplayerInventory", function(xInv)
+	end)
 end)
 
 RegisterNetEvent('esx_irpidentity:setCharacterInformation')

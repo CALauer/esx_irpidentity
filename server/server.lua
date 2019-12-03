@@ -545,55 +545,6 @@ AddEventHandler('removeLoadout', function(xPlayer, loadout)
 	end)
 end)
 
-RegisterServerEvent('setJob')
-AddEventHandler("setJob", function(setJob)
-local playerLoadout = {}
-
-	local xPlayer = ESX.GetPlayerFromId(source)
-	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT * FROM `users` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier,
-		['@loadout']	= loadout,
-
-	}, function(result)
-		if result[1]~= nil then
-			local data = {
-				identifier			= result[1].identifier,
-				job 				= result[1].job,
-				job_grade			= result[1].job_grade,
-				money				= result[1].money,
-				bank				= result[1].bank,
-				loadout				= result[1].loadout,
-			}
-			local loadout = json.decode(result[1].loadout)
-			local bank				= tonumber(result[1].bank)
-			local money				= tonumber(result[1].money)
-			local job				= result[1].job
-			local grade				= result[1].job_grade
-		if xPlayer then
-			if ESX.DoesJobExist(job, grade) then
-				xPlayer.setJob(job, grade)
-				xPlayer.setBankBalance(bank)
-				print(bank)
-				xPlayer.setMoney(money)
-			else
-				TriggerClientEvent('chat:addMessage', source, { args = { '^1SYSTEM', 'That job does not exist.' } })
-			end
-				if xPlayer then
-					for i=1, #xPlayer.loadout, 1 do
-						xPlayer.removeWeapon(xPlayer.loadout[i].name)
-					end
-					for i=1, #loadout, 1 do
-						if loadout[i].label ~= nil then
-						xPlayer.addWeapon(loadout[i].name, loadout[i].ammo)
-					end
-				end
-				end
-			end
-		end
-	end)
-end)
-
 --[[RegisterServerEvent('saveCharacter')
 AddEventHandler('saveCharacter', function(saveCharacter)
 local xPlayer = ESX.GetPlayerFromId(source)
