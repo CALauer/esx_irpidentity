@@ -43,8 +43,8 @@
 	- Jobs/Skin/Loadout/Cash/Bank tied to character
 
 ## Current Commands
-	- /register		- Opens the registration/characters selection screen
-	- /charlist		- displays a list of all your characters
+	- /register		- Opens the registration/characters selection screen || No longer Available
+	- /charlist		- displays a list of all your characters || No longer Available
 	- /char			- displays your active character
 	- /switch 		- switch toons/register
 
@@ -68,11 +68,11 @@
 	- Make items/property/vehicles bound to character not account
 
 ## Goals/Future Updates
-	- Create specific area for character swapping 
-	- Add delete chracter feature
-	- Speed up transitioning time
-	- Add more checks to registration 
-	- Code cleanup and 
+	- Create specific area for character swapping  (Complete)
+	- Add delete chracter feature				   (Complete)
+	- Speed up transitioning time				   (Complete)
+	- Add more checks to registration         
+	- Code cleanup
 
 ## Other
 	- This code is a bit sloppy and this is my first big release. So please bear with me, I wanted to release this 
