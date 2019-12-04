@@ -44,28 +44,43 @@ print("Setting Bank")
 		end
 	end)
 end)
+	
 
 RegisterServerEvent('setLoadout')
 AddEventHandler("setLoadout", function(setLoadout)
 print("Setting Loadout")
+	local loadout1 = {}
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT loadout FROM `users` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier,
+	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+	['@irpid'] = irpid,
+	['@identifier'] = identifier
 	}, function(result)
-		if result[1]~= nil then
-			local loadout = json.decode(result[1].loadout)
-			if xPlayer then
-				for i=1, #xPlayer.loadout, 1 do
-					xPlayer.removeWeapon(xPlayer.loadout[i].name)
+			print(result[1].irpid)
+			local irpid = result[1].irpid
+		MySQL.Async.fetchAll('SELECT loadout FROM `characters` WHERE `identifier` = @identifier AND irpid = @irpid', {
+			['@irpid'] = irpid,
+			['@identifier'] = identifier,
+			['@loadout']	= loadout,
+		}, function(result)
+			if result[1].loadout ~= nil then
+				local data = {
+					identifier			= result[1].identifier,
+					loadout				= result[1].loadout,
+				}
+				local loadout = json.decode(result[1].loadout)
+				print("************************************************")
+				for k , v in pairs(loadout) do 
+				print(v.name)
 				end
-				for i=1, #loadout, 1 do
-						if loadout[i].label ~= nil then
-						xPlayer.addWeapon(loadout[i].name, loadout[i].ammo)
-					end
+				for i=1, #xPlayer.loadout, 1 do
+				xPlayer.removeWeapon(xPlayer.loadout[i].name)
+				end
+				for i=1, #loadout, 1 do 
+				xPlayer.addWeapon(loadout[i].name, loadout[i].ammo)
 				end
 			end
-		end
+		end)
 	end)
 end)
 
