@@ -397,12 +397,10 @@ AddEventHandler('updateIdentity', function(identifier, data, callback)
 			callback(true)
 			end
 		end)
-	Citizen.Wait(1000)
 	TriggerClientEvent('updateIdentity', -1, skin)
-	Citizen.Wait(200)
 end)
 -- saves
-RegisterServerEvent('saveIdentity') -- saves one last time before charact swap //is necessary
+--[[RegisterServerEvent('saveIdentity') -- saves one last time before charact swap //is necessary
 AddEventHandler('saveIdentity', function (identifier, data, callback)
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data) -- gets identifier from database 
@@ -428,8 +426,8 @@ AddEventHandler('saveIdentity', function (identifier, data, callback)
 		end)
 		Citizen.Wait(1000)
 	end)
-end)
-	-- Save most recent loadout/money/ect to both characters and user tables //is necessary
+end)]]--
+	-- Save most recent loadout/money/ect to both characters table //is necessary
 RegisterServerEvent('saveIdentityBeforeChange')  
 AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback)
 	local identifier = GetPlayerIdentifiers(source)[1] --grabs ingame identifier else will not find it
@@ -437,27 +435,6 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 	local source = xPlayer.source
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data)
-	MySQL.Async.execute('UPDATE `users` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND irpid = @irpid', {
-		['@identifier']					= identifier,
-		['@irpid']						= data[1].irpid,
-		['@firstname']					= data[1].firstname,
-		['@lastname']					= data[1].lastname,
-		['@dateofbirth']				= data[1].dateofbirth,
-		['@sex']						= data[1].sex,
-		['@height']						= data[1].height,
-		['@skin']						= data[1].skin,
-		['@money']						= data[1].money,
-		['@job']						= xPlayer.job.name,
-		['@job_grade']					= xPlayer.job.grade,
-		['@loadout']					= json.encode(xPlayer.getLoadout()),
-		['@bank']						= data[1].bank,
-		['@permission_level']			= data[1].permission_level,
-		['@position']					= data[1].position
-	}, function(rowsChanged)
-			if callback then
-				callback(true)
-			end
-		end)
 		Citizen.Wait(500)
 		MySQL.Async.execute('UPDATE `characters` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND irpid = @irpid', {
 		['@identifier']					= identifier,
@@ -479,7 +456,7 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 			if callback then
 				callback(true)
 		end
-		TriggerClientEvent('saveCharacterAttributes', source)
+		TriggerEvent('saveXplayerInventory', xPlayer, identifier)
 	end)
 end)
 RegisterNetEvent('deleteCharacter')
@@ -690,7 +667,7 @@ AddEventHandler('deleteCharacters', function(charid)
 	end)
 end)
 
-RegisterServerEvent("esx_irpidentity:CharacterChosen")
+RegisterServerEvent("esx_irpidentity:CharacterChosen") --triggered from "Play button"
 AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 	local source = source
 	local charNumber = tonumber(charid)
@@ -718,15 +695,12 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 
 			}
 			if data.firstname ~= '' then
-				TriggerEvent('saveIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
-					Citizen.Wait(1000)
-					TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
-						if callback then
-							TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
-						else
-							TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to update your identity, try again later or contact the server admin!' } })
-						end
-					end)
+				TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
+					if callback then
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
+					else
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to update your identity, try again later or contact the server admin!' } })
+					end
 				end)
 			else
 				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 1!' } })
@@ -753,15 +727,12 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 			}
 
 			if data.firstname ~= '' then
-				TriggerEvent('saveIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
-					Citizen.Wait(2000)
-					TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
-						if callback then
-							TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
-						else
-							TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to update your identity, try again later or contact the server admin!' } })
-						end
-					end)
+				TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
+					if callback then
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
+					else
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to update your identity, try again later or contact the server admin!' } })
+					end
 				end)
 			else
 				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 2!' } })
@@ -788,15 +759,12 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 				position					= data.position3
 			}
 			if data.firstname ~= '' then
-				TriggerEvent('saveIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
-					Citizen.Wait(1000)
-					TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
-						if callback then
-							TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
-						else
-							TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to update your identity, try again later or contact the server admin!' } })
-						end
-					end)
+				TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
+					if callback then
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
+					else
+						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Failed to update your identity, try again later or contact the server admin!' } })
+					end
 				end)
 			else
 				TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'You don\'t have a character in slot 3!' } })
@@ -811,9 +779,10 @@ end)
 -------------------------------------                        UPDATES CHARACTER FROM USER                       -------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-ESX.RegisterServerCallback("updateCharacterInventory", function(source, charInv)
+RegisterServerEvent('updateCharacterInventory')
+AddEventHandler("updateCharacterInventory", function(identifier)
 local xPlayer = ESX.GetPlayerFromId(source)
-local identifier = GetPlayerIdentifiers(source)[1]
+local identifier = identifier
 print("Updating character inventory")
 	MySQL.Async.fetchAll('SELECT irpid FROM users WHERE identifier = @identifier', {
 	['@identifier'] = identifier
@@ -832,7 +801,8 @@ end)
 -------------------------------------                         UPDATES USER FROM CHARACTER DB                   -------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-ESX.RegisterServerCallback("updateUserInventory", function(source, userInv)
+RegisterServerEvent('updateUserInventory')
+AddEventHandler("updateUserInventory", function(userInv)
 local xPlayer = ESX.GetPlayerFromId(source)
 local identifier = GetPlayerIdentifiers(source)[1]
 	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
@@ -847,7 +817,6 @@ local identifier = GetPlayerIdentifiers(source)[1]
 	['@irpid']	= irpid
 	})
 	end)
-	userInv("k")
 end)
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -856,54 +825,17 @@ end)
 -------------------------------------                   ALSO UPDATES INVENTORY IF NO VALUES FOUND              -------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-ESX.RegisterServerCallback("updateXplayerInventory", function(source, xInv)
---TriggerEvent('es:addCommand', 'testing1', function(source, args, user)
-local xPlayer = ESX.GetPlayerFromId(source)
-local identifier = GetPlayerIdentifiers(source)[1]
-	playerInventory = json.encode(xPlayer.getInventory())
-	print(ESX.Items)
-	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
-	['@irpid'] = irpid,
-	['@identifier'] = identifier
-		}, function(result)
-				print(result[1].irpid)
-				local irpid = result[1].irpid
-			MySQL.Async.fetchAll('SELECT item, count FROM user_inventory WHERE identifier = @identifier AND irpid = @irpid', {
-				['@identifier'] = identifier,
-				['@irpid'] = irpid
-			}, function(inventory) --Returnns items from database
-				for k,v in ipairs(inventory) do
-					local item = ESX.Items[v.item] -- Checks to make sure item is item
-					if item then
-						table.insert(xPlayer.inventory, { -- inserts the items into Xplayer inventory in propper format
-							name = v.item,
-							count = v.count,
-							label = item.label,
-							weight = item.weight,
-							usable = ESX.UsableItemsCallbacks[v.item] ~= nil,
-							rare = item.rare,
-							canRemove = item.canRemove
-						})					
-					end
-				end
-			for i=1, #xPlayer.inventory, 1 do --------sets Xplayer inventory
-				if xPlayer.inventory[i].count >= 0 then
-					xPlayer.setInventoryItem(xPlayer.inventory[i].name, xPlayer.inventory[i].count)
-				end
-			end
-		end)	
-	end)
-	xInv("ok")
-end)
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------                          UPDATES USER INVENTORY                          -------------------------------------
 -------------------                                                  FROM XPLAYER												 ------------------- 
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-ESX.RegisterServerCallback("saveXplayerInventory", function(source, saveX)
-	local xPlayer = ESX.GetPlayerFromId(source)
-	local identifier = GetPlayerIdentifiers(source)[1]
+RegisterServerEvent('saveXplayerInventory')
+AddEventHandler("saveXplayerInventory", function(xPlayer, identifier)
+	local xPlayer = xPlayer
+	local identifier = identifier
 	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
 	['@identifier'] = identifier,
 	}, function(result)
@@ -918,9 +850,55 @@ ESX.RegisterServerCallback("saveXplayerInventory", function(source, saveX)
 			}, function(rowsChanged)
 			end)
 		end
-		saveX("k")
 	end)
 end)
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------                  UPDATES XPLAYER INVENTORY IN GAME REAL TIME             -------------------------------------
+-------------------                                                  FROM DATABASE												 ------------------- 
+-------------------------------------                   ALSO UPDATES INVENTORY IF NO VALUES FOUND              -------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------------------
+RegisterServerEvent('updateXplaysetInvZero')
+AddEventHandler("updateXplaysetInvZero", function(InvZ)
+	
+	--TriggerEvent('es:addCommand', 'testing1', function(source, args, user)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local identifier = GetPlayerIdentifiers(source)[1]
+		playerInventory = json.encode(xPlayer.getInventory())
+		print(ESX.Items)
+		MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+		['@irpid'] = irpid,
+		['@identifier'] = identifier
+			}, function(result)
+					print(result[1].irpid)
+					local irpid = result[1].irpid
+				MySQL.Async.fetchAll('SELECT item, count FROM character_inventory WHERE identifier = @identifier AND irpid = @irpid', {
+					['@identifier'] = identifier,
+					['@irpid'] = irpid
+				}, function(inventory) --Returnns items from database
+					for k,v in ipairs(inventory) do
+						local item = ESX.Items[v.item] -- Checks to make sure item is item
+						if item then
+							table.insert(xPlayer.inventory, { -- inserts the items into Xplayer inventory in propper format
+								name = v.item,
+								count = v.count,
+								label = item.label,
+								weight = item.weight,
+								usable = ESX.UsableItemsCallbacks[v.item] ~= nil,
+								rare = item.rare,
+								canRemove = item.canRemove
+							})					
+						end
+					end
+				for i=1, #xPlayer.inventory, 1 do --------sets Xplayer inventory
+					if xPlayer.inventory[i].count >= 0 then
+						xPlayer.setInventoryItem(xPlayer.inventory[i].name, 0)
+					end
+				end
+			end)	
+		end)
+	end)
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------------------------------------------------------------
 -------------------------------------                               INPUT COMMANDS                             -------------------------------------

@@ -91,36 +91,28 @@ Citizen.CreateThread(function()
 end)
 -- Updates character information
 RegisterNetEvent('updateIdentity')
-AddEventHandler('updateIdentity', function(source, skin)	
-	Citizen.Wait(1000)
-	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin) 					 -- Set player skin
-		TriggerEvent('skinchanger:loadSkin', skin)								
-		TriggerServerEvent('setJob', setJob)											 -- Set player job
-		TriggerServerEvent('setMoney', setMoney)                     		 		     -- Set cash
-		TriggerServerEvent('setBank', setBank)											 -- Set bank account
-		TriggerServerEvent('setLoadout', setLoadout)									 -- Set loadout							
-	    ESX.TriggerServerCallback('updateUserInventory', function(userInv)				 -- Updates user inventory database to new toon
-			if userInv == "k" then 														
-				ESX.TriggerServerCallback('updateXplayerInventory', function(xInv)		 -- Updates in game character inventory
-				end)
-			end
-		end)
-	end)
-end)
-RegisterNetEvent('saveCharacterAttributes')
-AddEventHandler('saveCharacterAttributes', function(saveCharacter)
-	ESX.TriggerServerCallback('saveXplayerInventory', function(saveX) -- gets inventory from player and saves to character inventory
-	end)
-end)
--- Registers New Character
-RegisterNetEvent('registerCharacter')
-AddEventHandler('registerCharacter', function(identifier)
+AddEventHandler('updateIdentity', function(source, skin)
+	TriggerServerEvent('updateUserInventory', userInv)				 -- Updates user inventory database to new toon																						
 	TriggerServerEvent('setJob', setJob)											 -- Set player job
 	TriggerServerEvent('setMoney', setMoney)                     		 		     -- Set cash
 	TriggerServerEvent('setBank', setBank)											 -- Set bank account
-	TriggerServerEvent('setLoadoutNone', setLoadoutNone)							 -- Set new character loadout	
-	ESX.TriggerServerCallback("updateXplayerInventory", function(xInv)				 -- Updates the in game character inventory
+	TriggerServerEvent('setLoadout', setLoadout)								     -- Set loadout																		
+	TriggerServerEvent('setInventory', xInv)		 								 -- Updates in game character inventory		
+	ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin) 					 -- Set player skin
+		TriggerEvent('skinchanger:loadSkin', skin)
 	end)
+end)
+
+-- Registers New Character
+RegisterNetEvent('registerCharacter')
+AddEventHandler('registerCharacter', function(identifier)
+	TriggerServerEvent("updateUserInventory", userInv)			 	 -- Updates user inventory database to new toon			
+	TriggerServerEvent('setJob', setJob)											 -- Set player job
+	TriggerServerEvent('setMoney', setMoney)                     		 		     -- Set cash
+	TriggerServerEvent('setBank', setBank)											 -- Set bank account
+	TriggerServerEvent('setLoadoutNone', setLoadoutNone)							 -- Set new character loadout											
+	TriggerServerEvent('updateXplaysetInvZero', InvZ)		 -- Updates in game character inventory
+	print("I am now setting counts to 0")
 end)
 
 -- Sets information for display on HUD
@@ -224,9 +216,10 @@ ESX.TriggerServerCallback('esx_irpidentity:characterCheck', function(check)
 		if reason == "" then
 			TriggerServerEvent('esx_irpidentity:setIdentity', data, myIdentifiers)
 			EnableGui(false)
+			TriggerEvent('registerCharacter')
 			Citizen.Wait(2000)
 			TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
-			TriggerEvent('registerCharacter')
+
 		else
 			ESX.ShowNotification(reason)
 		end

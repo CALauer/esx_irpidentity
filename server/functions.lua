@@ -105,3 +105,25 @@ local playerLoadout = {}
 		end
 	end)
 end)
+RegisterServerEvent('setInventory')
+AddEventHandler("setInventory", function(xInv)
+	local xPlayer = ESX.GetPlayerFromId(source)
+	local identifier = GetPlayerIdentifiers(source)[1]
+	print(ESX.Items)
+	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+	['@irpid'] = irpid,
+	['@identifier'] = identifier
+		}, function(result)
+				print(result[1].irpid)
+				local irpid = result[1].irpid
+	MySQL.Async.fetchAll('SELECT item, count FROM character_inventory WHERE identifier = @identifier AND irpid = @irpid', { --gets players irpid || identifier = steamID
+	['@irpid'] = irpid,
+	['@identifier'] = identifier
+		}, function(inventory)
+		print(inventory)
+			for k,v in ipairs(inventory) do 
+			xPlayer.setInventoryItem(v.item, v.count)
+			end		
+		end)
+	end)
+end)
