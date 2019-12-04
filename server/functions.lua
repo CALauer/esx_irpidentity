@@ -10,18 +10,25 @@ AddEventHandler("setMoney", function(setMoney)
 print("Setting Money")
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT money FROM `users` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier,
+	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+	['@irpid'] = irpid,
+	['@identifier'] = identifier
 	}, function(result)
-		if result[1]~= nil then
-			local data = {
-				money				= result[1].money,
-			}
-			local money				= tonumber(result[1].money)
-			if xPlayer then
-			xPlayer.setMoney(money)
+			print(result[1].irpid)
+			local irpid = result[1].irpid
+		MySQL.Async.fetchAll('SELECT money FROM `characters` WHERE `identifier` = @identifier', {
+			['@identifier'] = identifier,
+		}, function(result)
+			if result[1]~= nil then
+				local data = {
+					money				= result[1].money,
+				}
+				local money				= tonumber(result[1].money)
+				if xPlayer then
+				xPlayer.setMoney(money)
+				end
 			end
-		end
+		end)
 	end)
 end)
 
@@ -30,22 +37,30 @@ AddEventHandler("setBank", function(setBank)
 print("Setting Bank")
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT bank FROM `users` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier,
+	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+	['@irpid'] = irpid,
+	['@identifier'] = identifier
 	}, function(result)
-		if result[1]~= nil then
-			local data = {
-				bank				= result[1].bank,
-			}
-			local bank				= tonumber(result[1].bank)
-			if xPlayer then
-			xPlayer.setBankBalance(bank)
+			print(result[1].irpid)
+			local irpid = result[1].irpid
+		MySQL.Async.fetchAll('SELECT bank FROM `characters` WHERE `identifier` = @identifier AND irpid = @irpid', {
+			['@identifier'] = identifier,
+			['@irpid']	= irpid,
+		}, function(result)
+			if result[1]~= nil then
+				local data = {
+					bank				= result[1].bank,
+				}
+				local bank				= tonumber(result[1].bank)
+				if xPlayer then
+				xPlayer.setBankBalance(bank)
+				end
 			end
-		end
+		end)
 	end)
 end)
 	
-
+----------------Updates loadout real time
 RegisterServerEvent('setLoadout')
 AddEventHandler("setLoadout", function(setLoadout)
 print("Setting Loadout")
@@ -96,28 +111,35 @@ end)
 
 RegisterServerEvent('setJob')
 AddEventHandler("setJob", function(setJob)
-local playerLoadout = {}
-
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local identifier = GetPlayerIdentifiers(source)[1]
-	MySQL.Async.fetchAll('SELECT * FROM `users` WHERE `identifier` = @identifier', {
-		['@identifier'] = identifier,
-		['@loadout']	= loadout,
-
+	MySQL.Async.fetchAll('SELECT irpid, identifier FROM users WHERE identifier = @identifier', { --gets players irpid || identifier = steamID
+	['@irpid'] = irpid,
+	['@identifier'] = identifier
 	}, function(result)
-		if result[1]~= nil then
-			local data = {
-				job 				= result[1].job,
-				job_grade			= result[1].job_grade,
-			}
-			local job				= result[1].job
-			local grade				= result[1].job_grade
-			if xPlayer then
-				if ESX.DoesJobExist(job, grade) then
-					xPlayer.setJob(job, grade)
+			print(result[1].irpid)
+			local irpid = result[1].irpid
+		MySQL.Async.fetchAll('SELECT job, job_grade FROM `characters` WHERE `identifier` = @identifier AND `irpid` = @irpid', {
+			['@irpid']		= irpid,
+			['@identifier'] = identifier,
+			['@job']		= job,
+			['@job_grade']	= job_grade
+
+		}, function(result)
+			if result[1]~= nil then
+				local data = {
+					job 				= result[1].job,
+					job_grade			= result[1].job_grade,
+				}
+				local job				= result[1].job
+				local grade				= result[1].job_grade
+				if xPlayer then
+					if ESX.DoesJobExist(job, grade) then
+						xPlayer.setJob(job, grade)
+					end
 				end
 			end
-		end
+		end)
 	end)
 end)
 RegisterServerEvent('setInventory')
