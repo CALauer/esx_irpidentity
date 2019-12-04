@@ -377,7 +377,9 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 end)
 
 RegisterServerEvent('updateIdentity')
-AddEventHandler('updateIdentity', function(identifier, data, callback)
+AddEventHandler('updateIdentity', function(source, xPlayer, identifier, data, callback)
+	local identifier = GetPlayerIdentifiers(source)[1] --grabs ingame identifier else will not find it
+	local xPlayer = xPlayer
 	MySQL.Async.execute('UPDATE users SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier', {
 		['@identifier']					= identifier,
 		['@irpid']						= data.irpid,
@@ -397,9 +399,12 @@ AddEventHandler('updateIdentity', function(identifier, data, callback)
 		if callback then
 			callback(true)
 			end
+			print(xPlayer)
+			print(identifier)
+			print(source)
+				TriggerClientEvent('updateIdentity', source, skin)
 		end)
-		Citizen.Wait(500)
-	TriggerClientEvent('updateIdentity', -1, skin)
+
 end)
 -- saves
 --[[RegisterServerEvent('saveIdentity') -- saves one last time before charact swap //is necessary
@@ -697,7 +702,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 
 			}
 			if data.firstname ~= '' then
-				TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
+				TriggerEvent('updateIdentity',source, xPlayer, GetPlayerIdentifiers(source)[1], data, function(callback)
 					if callback then
 						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
 					else
@@ -729,7 +734,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 			}
 
 			if data.firstname ~= '' then
-				TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
+				TriggerEvent('updateIdentity', source, xPlayer, GetPlayerIdentifiers(source)[1], data, function(callback)
 					if callback then
 						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
 					else
@@ -761,7 +766,7 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 				position					= data.position3
 			}
 			if data.firstname ~= '' then
-				TriggerEvent('updateIdentity', GetPlayerIdentifiers(source)[1], data, function(callback)
+				TriggerEvent('updateIdentity',source, xPlayer, GetPlayerIdentifiers(source)[1], data, function(callback)
 					if callback then
 						TriggerClientEvent('chat:addMessage', source, { args = { '^3[ImpulseRP]', 'Updated your active character to ^2' .. data.firstname .. ' ' .. data.lastname } })
 					else

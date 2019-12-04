@@ -91,7 +91,7 @@ Citizen.CreateThread(function()
 end)
 -- Updates character information
 RegisterNetEvent('updateIdentity')
-AddEventHandler('updateIdentity', function(source, skin)
+AddEventHandler('updateIdentity', function(xPlayer, skin)
 	TriggerServerEvent('updateUserInventory', userInv)				 -- Updates user inventory database to new toon																						
 	TriggerServerEvent('setJob', setJob)											 -- Set player job
 	TriggerServerEvent('setMoney', setMoney)                     		 		     -- Set cash
