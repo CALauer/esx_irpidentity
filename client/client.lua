@@ -302,11 +302,11 @@ Citizen.CreateThread(function()
 							blipValue = false
 							TriggerServerEvent('esx_irpidentity:getClientInfo')
 							TriggerServerEvent('saveIdentityBeforeChange')
-						--[[		TriggerEvent('chat:addMessage', {																	---- Uncomment to add timer			
+								TriggerEvent('chat:addMessage', {																	---- Uncomment to add timer			
 								color = { 255, 0, 0},																					---- Uncomment to add timer	
 								multiline = true,																						---- Uncomment to add timer	
-								args = {"[ImpulseRP]", "You must wait 5 mintues before registering a new character, or switching"}})	---- Uncomment to add timer	
-								Wait(300000)	]]--																					---- Uncomment to add timer	
+								args = {"[ImpulseRP]", "You must wait 30 seconds before registering a new character, or switching"}})	---- Uncomment to add timer	
+								Wait(30000)																						---- Uncomment to add timer	
 							elseif not IsControlJustReleased(0, Keys['E']) then											
  							blipValue = true																						
 
