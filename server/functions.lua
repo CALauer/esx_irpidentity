@@ -94,6 +94,8 @@ print("Setting Loadout")
 				for i=1, #loadout, 1 do 
 				xPlayer.addWeapon(loadout[i].name, loadout[i].ammo)
 				end
+			else
+			print("you have no loadout")
 			end
 		end)
 	end)
@@ -119,7 +121,7 @@ AddEventHandler("setJob", function(setJob)
 	}, function(result)
 			print(result[1].irpid)
 			local irpid = result[1].irpid
-		MySQL.Async.fetchAll('SELECT job, job_grade FROM `characters` WHERE `identifier` = @identifier AND `irpid` = @irpid', {
+		MySQL.Async.fetchAll('SELECT job, job_grade FROM users WHERE identifier = @identifier AND irpid = @irpid', {
 			['@irpid']		= irpid,
 			['@identifier'] = identifier,
 			['@job']		= job,

@@ -332,45 +332,46 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 	for i = 1, length do
 		irpid = irpid .. charTable[math.random(1, #charTable)]
 	end
-		MySQL.Async.execute('UPDATE `user_inventory` SET `irpid` = @irpid, count = 0 WHERE identifier = @identifier', {   --- Sets inventory account to 0 when registering/creating new character
-	['@identifier'] = identifier,
-	['@irpid'] = irpid
-	})
-		MySQL.Async.execute('SELECT * FROM `user_inventory` WHERE identifier = @identifier AND irpid = @irpid', { --- Gets character unique irpid
-	['@identifier'] = identifier,
-	['@irpid'] = irpid
-	})
-		MySQL.Async.execute('INSERT INTO character_inventory (identifier, irpid, item, count) SELECT identifier, irpid, item, count FROM user_inventory WHERE irpid = @irpid', { --- Updates the character inventory
-		['@irpid'] = irpid
-	})
-	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade, irpid) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade, @irpid)', {
-		['@identifier']		= identifier,
-		['@firstname']		= data.firstname,
-		['@lastname']		= data.lastname,
-		['@dateofbirth']	= data.dateofbirth,
-		['@sex']			= data.sex,
-		['@height']			= data.height,
-		['@bank']			= "0",
-		['@money']			= "0",
-		['@job']			= "unemployed",
-		['@job_grade']		= "0",
-		['@irpid']			= irpid
-	}, function(rowsChanged)
-		if callback then
-			callback(true)
-		end
 	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `bank` = @bank, `money` = @money, `job` = @job, `job_grade` = @job_grade, `irpid` = @irpid WHERE identifier = @identifier', {
-		['@identifier']		= identifier,
-		['@firstname']		= data.firstname,
-		['@lastname']		= data.lastname,
-		['@dateofbirth']	= data.dateofbirth,
-		['@sex']			= data.sex,
-		['@height']			= data.height,
-		['@bank']			= "0",
-		['@money']			= "0",
-		['@job']			= "unemployed",
-		['@job_grade']		= "0",
-		['@irpid']			= irpid
+	['@identifier']		= identifier,
+	['@firstname']		= data.firstname,
+	['@lastname']		= data.lastname,
+	['@dateofbirth']	= data.dateofbirth,
+	['@sex']			= data.sex,
+	['@height']			= data.height,
+	['@bank']			= "0",
+	['@money']			= "0",
+	['@job']			= "unemployed",
+	['@job_grade']		= "0",
+	['@irpid']			= irpid
+}, function(rowsChanged)
+	if callback then
+		callback(true)
+	end
+	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade, irpid) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade, @irpid)', {
+	['@identifier']		= identifier,
+	['@firstname']		= data.firstname,
+	['@lastname']		= data.lastname,
+	['@dateofbirth']	= data.dateofbirth,
+	['@sex']			= data.sex,
+	['@height']			= data.height,
+	['@bank']			= "0",
+	['@money']			= "0",
+	['@job']			= "unemployed",
+	['@job_grade']		= "0",
+	['@irpid']			= irpid
+
+	})
+	MySQL.Async.execute('UPDATE `user_inventory` SET `irpid` = @irpid, count = 0 WHERE identifier = @identifier', {   --- Sets inventory account to 0 when registering/creating new character
+	['@identifier'] = identifier,
+	['@irpid'] = irpid
+	})
+	MySQL.Async.execute('SELECT * FROM `user_inventory` WHERE identifier = @identifier AND irpid = @irpid', { --- Gets character unique irpid
+	['@identifier'] = identifier,
+	['@irpid'] = irpid
+	})
+	MySQL.Async.execute('INSERT INTO character_inventory (identifier, irpid, item, count) SELECT identifier, irpid, item, count FROM user_inventory WHERE irpid = @irpid', { --- Updates the character inventory
+		['@irpid'] = irpid
 	})
 	end)
 end)
@@ -397,6 +398,7 @@ AddEventHandler('updateIdentity', function(identifier, data, callback)
 			callback(true)
 			end
 		end)
+		Citizen.Wait(500)
 	TriggerClientEvent('updateIdentity', -1, skin)
 end)
 -- saves
@@ -435,7 +437,7 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 	local source = xPlayer.source
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data)
-		Citizen.Wait(500)
+
 		MySQL.Async.execute('UPDATE `characters` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND irpid = @irpid', {
 		['@identifier']					= identifier,
 		['@irpid']						= data[1].irpid,

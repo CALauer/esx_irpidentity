@@ -216,6 +216,7 @@ ESX.TriggerServerCallback('esx_irpidentity:characterCheck', function(check)
 		if reason == "" then
 			TriggerServerEvent('esx_irpidentity:setIdentity', data, myIdentifiers)
 			EnableGui(false)
+			Citizen.Wait(2000)
 			TriggerEvent('registerCharacter')
 			Citizen.Wait(2000)
 			TriggerEvent('esx_skin:openSaveableMenu', myIdentifiers.id)
