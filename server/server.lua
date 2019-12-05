@@ -363,7 +363,7 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 	if callback then
 		callback(true)
 	end
-	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade, phone_number, irpid) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade, @phone_number @irpid)', {
+	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade, phone_number, irpid) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade, @phone_number, @irpid)', {
 	['@identifier']		= identifier,
 	['@firstname']		= data.firstname,
 	['@lastname']		= data.lastname,

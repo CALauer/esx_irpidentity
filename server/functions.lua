@@ -60,7 +60,7 @@ print("Setting Bank")
 	end)
 end)
 	
-----------------Updates loadout real time
+----------------Updates loadout real time | removes then adds
 RegisterServerEvent('setLoadout')
 AddEventHandler("setLoadout", function(setLoadout)
 print("Setting Loadout")
@@ -101,6 +101,7 @@ print("Setting Loadout")
 	end)
 end)
 
+-- sets loadout to zero
 RegisterServerEvent('setLoadoutNone')
 AddEventHandler("setLoadoutNone", function(setLoadoutNone)
 print("Setting Loadout to None")
@@ -144,6 +145,7 @@ AddEventHandler("setJob", function(setJob)
 		end)
 	end)
 end)
+
 RegisterServerEvent('setInventory')
 AddEventHandler("setInventory", function(xInv)
 	local xPlayer = ESX.GetPlayerFromId(source)
@@ -166,3 +168,6 @@ AddEventHandler("setInventory", function(xInv)
 		end)
 	end)
 end)
+
+-- Set Phone number
+-- Set Properties
