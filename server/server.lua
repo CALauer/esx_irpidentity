@@ -73,6 +73,7 @@ function getIdentity(source, callback)
 				permission_level 		= result[1].permission_level,
 				is_dead 				= result[1].last_property,
 				position				= result[1].position,
+				position				= result[1].phone_number,
 			}
 
 			callback(data)
@@ -94,6 +95,7 @@ function getIdentity(source, callback)
 				permission_level3 		=  '',
 				is_dead3 				=  '',
 				position3				=  '',
+				phone_number			=  '',
 			}
 
 			callback(data)
@@ -125,6 +127,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level1 		= result[1].permission_level,
 				is_dead1 				= result[1].last_property,
 				position1				= result[1].position,
+				phone_number1			= result[1].phone_number,
 				irpid2					= result[1].irpid,
 				firstname2				= result[2].firstname,
 				lastname2				= result[2].lastname,
@@ -140,6 +143,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level2 		= result[2].permission_level,
 				is_dead2 				= result[2].last_property,
 				position2				= result[2].position,
+				phone_number2			= result[2].phone_number,
 				irpid3					= result[3].irpid,
 				firstname3				= result[3].firstname,
 				lastname3				= result[3].lastname,
@@ -154,7 +158,8 @@ AddEventHandler("getCharacters", function(source, callback)
 				bank3 					= result[3].bank,
 				permission_level3 		= result[3].permission_level,
 				is_dead3 				= result[3].last_property,
-				position3				= result[3].position
+				position3				= result[3].position,
+				phone_number3			= result[3].phone_number
 			}
 
 			callback(data)
@@ -178,6 +183,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level1 		= result[1].permission_level,
 				is_dead1 				= result[1].last_property,
 				position1				= result[1].position,
+				phone_number1			= result[1].phone_number,
 				irpid2					= result[2].irpid,
 				firstname2				= result[2].firstname,
 				lastname2				= result[2].lastname,
@@ -193,6 +199,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level2 		= result[2].permission_level,
 				is_dead2 				= result[2].last_property,
 				position2				= result[2].position,
+				phone_number2			= result[2].phone_number,
 				irpid3					= '',
 				firstname3				= '',
 				lastname3				= '',
@@ -207,7 +214,8 @@ AddEventHandler("getCharacters", function(source, callback)
 				bank3 					= '',
 				permission_level3 		= '',
 				is_dead3 				= '',
-				position3				= ''
+				position3				= '',
+				phone_number			= ''
 			}
 
 			callback(data)
@@ -231,6 +239,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level1 		= result[1].permission_level,
 				is_dead1 				= result[1].last_property,
 				position1				= result[1].position,
+				phone_number1			= result[1].phone_number,
 				irpid2					= '',
 				firstname2				= '',
 				lastname2				= '',
@@ -246,6 +255,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level2 		= '',
 				is_dead2 				= '',
 				position2				= '',
+				phone_number2			= '',
 				irpid3					= '',
 				firstname3				= '',
 				lastname3				= '',
@@ -260,7 +270,8 @@ AddEventHandler("getCharacters", function(source, callback)
 				bank3 					= '',
 				permission_level3 		= '',
 				is_dead3 				= '',
-				position3				= ''
+				position3				= '',
+				phone_number3			= ''
 			}
 
 			callback(data)
@@ -283,6 +294,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level1 		= '',
 				is_dead1 				= '',
 				position1				= '',
+				phone_number1			= '',
 				irpid2					= '',
 				firstname2				= '',
 				lastname2				= '',
@@ -298,6 +310,7 @@ AddEventHandler("getCharacters", function(source, callback)
 				permission_level2 		= '',
 				is_dead2 				= '',
 				position2				= '',
+				phone_number2			= '',
 				irpid3					= '',
 				firstname3				= '',
 				lastname3				= '',
@@ -312,7 +325,8 @@ AddEventHandler("getCharacters", function(source, callback)
 				bank3 					= '',
 				permission_level3 		= '',
 				is_dead3 				= '',
-				position3				= ''
+				position3				= '',
+				phone_number3			= ''
 			}
 			callback(data)	
 		end
@@ -332,7 +346,7 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 	for i = 1, length do
 		irpid = irpid .. charTable[math.random(1, #charTable)]
 	end
-	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `bank` = @bank, `money` = @money, `job` = @job, `job_grade` = @job_grade, `irpid` = @irpid WHERE identifier = @identifier', {
+	MySQL.Async.execute('UPDATE `users` SET `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `bank` = @bank, `money` = @money, `job` = @job, `job_grade` = @job_grade, `irpid` = @irpid, `phone_number` = @phone_number WHERE identifier = @identifier', {
 	['@identifier']		= identifier,
 	['@firstname']		= data.firstname,
 	['@lastname']		= data.lastname,
@@ -343,12 +357,13 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 	['@money']			= "0",
 	['@job']			= "unemployed",
 	['@job_grade']		= "0",
-	['@irpid']			= irpid
+	['@irpid']			= irpid,
+	['@phone_number']	= "0"
 }, function(rowsChanged)
 	if callback then
 		callback(true)
 	end
-	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade, irpid) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade, @irpid)', {
+	MySQL.Async.execute('INSERT INTO characters (identifier, firstname, lastname, dateofbirth, sex, height, bank, money, job, job_grade, phone_number, irpid) VALUES (@identifier, @firstname, @lastname, @dateofbirth, @sex, @height, @bank, @money, @job, @job_grade, @phone_number @irpid)', {
 	['@identifier']		= identifier,
 	['@firstname']		= data.firstname,
 	['@lastname']		= data.lastname,
@@ -359,7 +374,9 @@ AddEventHandler('setIdentity', function(identifier, data, callback)
 	['@money']			= "0",
 	['@job']			= "unemployed",
 	['@job_grade']		= "0",
-	['@irpid']			= irpid
+	['@irpid']			= irpid,
+	['@phone_number']	= "0"
+
 
 	})
 	MySQL.Async.execute('UPDATE `user_inventory` SET `irpid` = @irpid, count = 0 WHERE identifier = @identifier', {   --- Sets inventory account to 0 when registering/creating new character
@@ -380,7 +397,7 @@ RegisterServerEvent('updateIdentity')
 AddEventHandler('updateIdentity', function(source, xPlayer, identifier, data, callback)
 	local identifier = GetPlayerIdentifiers(source)[1] --grabs ingame identifier else will not find it
 	local xPlayer = xPlayer
-	MySQL.Async.execute('UPDATE users SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier', {
+	MySQL.Async.execute('UPDATE users SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position, `phone_number` = @phone_number WHERE identifier = @identifier', {
 		['@identifier']					= identifier,
 		['@irpid']						= data.irpid,
 		['@firstname']					= data.firstname,
@@ -394,7 +411,8 @@ AddEventHandler('updateIdentity', function(source, xPlayer, identifier, data, ca
 		['@job_grade']					= data.job_grade,
 		['@loadout']					= data.loadout,
 		['@bank']						= data.bank,
-		['@permission_level']			= data.permission_level
+		['@permission_level']			= data.permission_level,
+		['@phone_number']				= data.phone_number
 	}, function(rowsChanged)
 		if callback then
 			callback(true)
@@ -406,34 +424,7 @@ AddEventHandler('updateIdentity', function(source, xPlayer, identifier, data, ca
 		end)
 
 end)
--- saves
---[[RegisterServerEvent('saveIdentity') -- saves one last time before charact swap //is necessary
-AddEventHandler('saveIdentity', function (identifier, data, callback)
-	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
-		['@identifier'] = identifier}, function(data) -- gets identifier from database 
-	MySQL.Async.execute('UPDATE `characters` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND irpid = @irpid', {
-		['@identifier']					= identifier,
-		['@irpid']						= data[1].irpid,
-		['@firstname']					= data[1].firstname,
-		['@lastname']					= data[1].lastname,
-		['@dateofbirth']				= data[1].dateofbirth,
-		['@sex']						= data[1].sex,
-		['@height']						= data[1].height,
-		['@skin']						= data[1].skin,
-		['@money']						= data[1].money,
-		['@job']						= data[1].job,
-		['@job_grade']					= data[1].job_grade,
-		['@loadout']					= data[1].loadout,
-		['@bank']						= data[1].bank,
-		['@permission_level']			= data[1].permission_level
-	}, function(rowsChanged)
-			if callback then
-				callback(true)
-			end
-		end)
-		Citizen.Wait(1000)
-	end)
-end)]]--
+
 	-- Save most recent loadout/money/ect to both characters table //is necessary
 RegisterServerEvent('saveIdentityBeforeChange')  
 AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback)
@@ -443,7 +434,7 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data)
 
-		MySQL.Async.execute('UPDATE `characters` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position WHERE identifier = @identifier AND irpid = @irpid', {
+		MySQL.Async.execute('UPDATE `characters` SET `irpid` = @irpid, `firstname` = @firstname, `lastname` = @lastname, `dateofbirth` = @dateofbirth, `sex` = @sex, `height` = @height, `skin` = @skin, `money` = @money,`job` = @job,`job_grade` = @job_grade,`loadout` = @loadout,`bank` = @bank,`permission_level` = @permission_level,`is_dead` = @is_dead,`position` = @position, `phone_number` = @phone_number WHERE identifier = @identifier AND irpid = @irpid', {
 		['@identifier']					= identifier,
 		['@irpid']						= data[1].irpid,
 		['@firstname']					= data[1].firstname,
@@ -458,7 +449,8 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 		['@loadout']					= json.encode(xPlayer.getLoadout()),
 		['@bank']						= data[1].bank,
 		['@permission_level']			= data[1].permission_level,
-		['@position']					= data[1].position
+		['@position']					= data[1].position,
+		['@phone_number']				= data[1].phone_number
 	}, function(rowsChanged)
 			if callback then
 				callback(true)
@@ -698,7 +690,8 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 				bank						= data.bank1,
 				permission_level			= data.permission_level1,
 				is_dead						= data.is_dead1,
-				position					= data.position1
+				position					= data.position1,
+				phone_number		     	= data.phone_number1
 
 			}
 			if data.firstname ~= '' then
@@ -730,7 +723,8 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 				bank						= data.bank2,
 				permission_level			= data.permission_level2,
 				is_dead						= data.is_dead2,
-				position					= data.position2
+				position					= data.position2,
+				phone_number		     	= data.phone_number2
 			}
 
 			if data.firstname ~= '' then
@@ -763,7 +757,8 @@ AddEventHandler("esx_irpidentity:CharacterChosen", function(charid)
 				bank						= data.bank3,
 				permission_level			= data.permission_level3,
 				is_dead						= data.is_dead3,
-				position					= data.position3
+				position					= data.position3,
+				phone_number		     	= data.phone_number3
 			}
 			if data.firstname ~= '' then
 				TriggerEvent('updateIdentity',source, xPlayer, GetPlayerIdentifiers(source)[1], data, function(callback)
