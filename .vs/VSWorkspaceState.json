@@ -4,6 +4,6 @@
     "\\client",
     "\\server"
   ],
-  "SelectedNode": "\\importMe.sql",
+  "SelectedNode": "\\server\\functions.lua",
   "PreviewInSolutionExplorer": false
 }

@@ -73,7 +73,7 @@ function getIdentity(source, callback)
 				permission_level 		= result[1].permission_level,
 				is_dead 				= result[1].last_property,
 				position				= result[1].position,
-				position				= result[1].phone_number,
+				phone_number			= result[1].phone_number,
 			}
 
 			callback(data)
