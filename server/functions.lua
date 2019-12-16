@@ -16,8 +16,9 @@ print("Setting Money")
 	}, function(result)
 			print(result[1].irpid)
 			local irpid = result[1].irpid
-		MySQL.Async.fetchAll('SELECT money FROM `characters` WHERE `identifier` = @identifier', {
+		MySQL.Async.fetchAll('SELECT money FROM `characters` WHERE `identifier` = @identifier AND irpid = @irpid', {
 			['@identifier'] = identifier,
+			['@irpid']		= irpid
 		}, function(result)
 			if result[1]~= nil then
 				local data = {

@@ -432,6 +432,7 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 	local identifier = GetPlayerIdentifiers(source)[1] --grabs ingame identifier else will not find it
 	local xPlayer = ESX.GetPlayerFromId(source)
 	local source = xPlayer.source
+	local money1 = xPlayer.getMoney()
 	MySQL.Async.fetchAll('SELECT * FROM users WHERE identifier = @identifier', {
 		['@identifier'] = identifier}, function(data)
 
@@ -444,7 +445,7 @@ AddEventHandler('saveIdentityBeforeChange', function (identifier, data, callback
 		['@sex']						= data[1].sex,
 		['@height']						= data[1].height,
 		['@skin']						= data[1].skin,
-		['@money']						= data[1].money,
+		['@money']						= money1,
 		['@job']						= xPlayer.job.name,
 		['@job_grade']					= xPlayer.job.grade,
 		['@loadout']					= json.encode(xPlayer.getLoadout()),

@@ -306,7 +306,7 @@ Citizen.CreateThread(function()
 								color = { 255, 0, 0},																					---- Uncomment to add timer	
 								multiline = true,																						---- Uncomment to add timer	
 								args = {"[ImpulseRP]", "You must wait 30 seconds before registering a new character, or switching"}})	---- Uncomment to add timer	
-								Wait(30000)																						---- Uncomment to add timer	
+								Wait(2)																						---- Uncomment to add timer	
 							elseif not IsControlJustReleased(0, Keys['E']) then											
  							blipValue = true																						
 
