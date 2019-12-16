@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\client",
+    "\\html",
     "\\server"
   ],
-  "SelectedNode": "\\server\\functions.lua",
+  "SelectedNode": "\\html\\index.html",
   "PreviewInSolutionExplorer": false
 }

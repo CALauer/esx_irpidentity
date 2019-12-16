@@ -412,7 +412,8 @@ AddEventHandler('updateIdentity', function(source, xPlayer, identifier, data, ca
 		['@loadout']					= data.loadout,
 		['@bank']						= data.bank,
 		['@permission_level']			= data.permission_level,
-		['@phone_number']				= data.phone_number
+		['@phone_number']				= data.phone_number,
+		['@position']					= data.position
 	}, function(rowsChanged)
 		if callback then
 			callback(true)
