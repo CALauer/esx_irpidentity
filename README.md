@@ -10,7 +10,7 @@
 ## Support
 - [ImpulseRP Forums](https://impulserp.com/forumdisplay.php?fid=5)
 - [gitHub](https://github.com/CALauer/esx_irpidentity)
-- [Discord](https://discord.gg/NqDGf3R)
+- [Discord](https://discord.gg/EyscYGk)
 - Be sure to report your bugs so I can fix them at the above mentioned. Thank you.
 
 ## Installation

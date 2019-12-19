@@ -38,7 +38,7 @@ end)
 
 AddEventHandler('playerSpawned', function(spawn)
 	isDead = false
-	SetEntityCoords(PlayerPedId(),337.66, -1396.79, 32.51)
+	--SetEntityCoords(PlayerPedId(),337.66, -1396.79, 32.51)
 	--TriggerServerEvent('esx_irpidentity:getClientInfo')  ---Add to config
 end)
 
