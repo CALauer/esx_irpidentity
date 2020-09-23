@@ -167,6 +167,7 @@ end)
 RegisterNetEvent('esx_irpidentity:showRegisterIdentity')
 AddEventHandler('esx_irpidentity:showRegisterIdentity', function()
 	if not isDead then
+		Citizen.Wait(1000)
 		EnableGui(true)
 	end
 end)
