@@ -1,5 +1,8 @@
 # esx_irpidentity
  ImpulseRP's Multicharacter Support for ESX
+ 
+ ## DOES NOT WORK WITH ESX LATEST RELEASE
+ At this time, this does not work with ESX's latest version. I encourage you to attempt to get it to, but it is not likely. Support for this respository is still available, but there is no longer going to be updates / changes at this time. 
 ## Dependencies
 - [skinchanger](https://github.com/ESX-Org/skinchanger)
 - [esx_skin](https://github.com/ESX-Org/esx_skin)
